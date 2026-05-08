@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_stats: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          updated_at: string
+          user_id: string
+          words_written: number
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          words_written?: number
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          words_written?: number
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+          word_count: number
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+          word_count?: number
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          word_count?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
