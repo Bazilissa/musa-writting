@@ -97,6 +97,42 @@ function Editor() {
     toast.success("Exported as Markdown.");
   };
 
+  const exportDocx = async () => {
+    const paragraphs: Paragraph[] = [
+      new Paragraph({
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        children: [new TextRun({ text: title || "Untitled", font: "Georgia", size: 56 })],
+      }),
+      new Paragraph({ children: [new TextRun("")] }),
+      ...content.split(/\n\n+/).map(
+        (block) =>
+          new Paragraph({
+            spacing: { after: 200, line: 360 },
+            children: block.split("\n").flatMap((line, i) =>
+              i === 0
+                ? [new TextRun({ text: line, font: "Georgia", size: 24 })]
+                : [new TextRun({ text: line, font: "Georgia", size: 24, break: 1 })],
+            ),
+          }),
+      ),
+    ];
+    const doc = new Document({
+      creator: "Inkwell",
+      title: title || "Untitled",
+      styles: { default: { document: { run: { font: "Georgia", size: 24 } } } },
+      sections: [{ children: paragraphs }],
+    });
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(title || "untitled").toLowerCase().replace(/\s+/g, "-")}.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Exported as Word document.");
+  };
+
   const copyText = async () => {
     await navigator.clipboard.writeText(`${title}\n\n${content}`);
     toast.success("Copied to clipboard.");
