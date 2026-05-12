@@ -158,8 +158,11 @@ function Editor() {
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Copy
             </button>
-            <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90">
+            <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Download className="h-3.5 w-3.5" /> .md
+            </button>
+            <button onClick={exportDocx} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90">
+              <FileText className="h-3.5 w-3.5" /> .docx
             </button>
           </div>
         </div>
