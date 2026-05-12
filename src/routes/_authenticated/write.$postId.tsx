@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText } from "lucide-react";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
   head: () => ({ meta: [{ title: "Writing · Inkwell" }] }),
@@ -96,6 +97,42 @@ function Editor() {
     toast.success("Exported as Markdown.");
   };
 
+  const exportDocx = async () => {
+    const paragraphs: Paragraph[] = [
+      new Paragraph({
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        children: [new TextRun({ text: title || "Untitled", font: "Georgia", size: 56 })],
+      }),
+      new Paragraph({ children: [new TextRun("")] }),
+      ...content.split(/\n\n+/).map(
+        (block) =>
+          new Paragraph({
+            spacing: { after: 200, line: 360 },
+            children: block.split("\n").flatMap((line, i) =>
+              i === 0
+                ? [new TextRun({ text: line, font: "Georgia", size: 24 })]
+                : [new TextRun({ text: line, font: "Georgia", size: 24, break: 1 })],
+            ),
+          }),
+      ),
+    ];
+    const doc = new Document({
+      creator: "Inkwell",
+      title: title || "Untitled",
+      styles: { default: { document: { run: { font: "Georgia", size: 24 } } } },
+      sections: [{ children: paragraphs }],
+    });
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(title || "untitled").toLowerCase().replace(/\s+/g, "-")}.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Exported as Word document.");
+  };
+
   const copyText = async () => {
     await navigator.clipboard.writeText(`${title}\n\n${content}`);
     toast.success("Copied to clipboard.");
@@ -121,8 +158,11 @@ function Editor() {
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Copy
             </button>
-            <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90">
+            <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Download className="h-3.5 w-3.5" /> .md
+            </button>
+            <button onClick={exportDocx} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90">
+              <FileText className="h-3.5 w-3.5" /> .docx
             </button>
           </div>
         </div>
