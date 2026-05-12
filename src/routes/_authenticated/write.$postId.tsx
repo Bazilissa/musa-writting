@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText } from "lucide-react";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
   head: () => ({ meta: [{ title: "Writing · Inkwell" }] }),
