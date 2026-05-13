@@ -98,21 +98,25 @@ function Editor() {
   };
 
   const exportDocx = async () => {
+    const FONT = "Times New Roman";
+    const SIZE = 24; // 12pt (half-points)
+    const LINE_150 = 360; // 240 = single, 360 = 1.5
     const paragraphs: Paragraph[] = [
       new Paragraph({
         heading: HeadingLevel.TITLE,
         alignment: AlignmentType.CENTER,
-        children: [new TextRun({ text: title || "Без названия", font: "Georgia", size: 56 })],
+        spacing: { line: LINE_150, after: 240 },
+        children: [new TextRun({ text: title || "Без названия", font: FONT, size: SIZE, bold: true })],
       }),
       new Paragraph({ children: [new TextRun("")] }),
       ...content.split(/\n\n+/).map(
         (block) =>
           new Paragraph({
-            spacing: { after: 200, line: 360 },
+            spacing: { after: 200, line: LINE_150 },
             children: block.split("\n").flatMap((line, i) =>
               i === 0
-                ? [new TextRun({ text: line, font: "Georgia", size: 24 })]
-                : [new TextRun({ text: line, font: "Georgia", size: 24, break: 1 })],
+                ? [new TextRun({ text: line, font: FONT, size: SIZE })]
+                : [new TextRun({ text: line, font: FONT, size: SIZE, break: 1 })],
             ),
           }),
       ),
@@ -120,7 +124,11 @@ function Editor() {
     const doc = new Document({
       creator: "Муза",
       title: title || "Без названия",
-      styles: { default: { document: { run: { font: "Georgia", size: 24 } } } },
+      styles: {
+        default: {
+          document: { run: { font: FONT, size: SIZE }, paragraph: { spacing: { line: LINE_150 } } },
+        },
+      },
       sections: [{ children: paragraphs }],
     });
     const blob = await Packer.toBlob(doc);
