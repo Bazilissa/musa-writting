@@ -8,7 +8,7 @@ import { ArrowLeft, Download, Copy, Sparkles, FileText } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
-  head: () => ({ meta: [{ title: "Writing · Inkwell" }] }),
+  head: () => ({ meta: [{ title: "Письмо · Муза" }] }),
   component: Editor,
 });
 
@@ -50,7 +50,7 @@ function Editor() {
     const wc = countWords(content);
     const { error } = await supabase
       .from("posts")
-      .update({ title: title || "Untitled", content, word_count: wc })
+      .update({ title: title || "Без названия", content, word_count: wc })
       .eq("id", postId);
     if (error) {
       toast.error(error.message);
@@ -91,10 +91,10 @@ function Editor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${(title || "untitled").toLowerCase().replace(/\s+/g, "-")}.md`;
+    a.download = `${(title || "bez-nazvaniya").toLowerCase().replace(/\s+/g, "-")}.md`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Exported as Markdown.");
+    toast.success("Экспортировано в Markdown.");
   };
 
   const exportDocx = async () => {
@@ -102,7 +102,7 @@ function Editor() {
       new Paragraph({
         heading: HeadingLevel.TITLE,
         alignment: AlignmentType.CENTER,
-        children: [new TextRun({ text: title || "Untitled", font: "Georgia", size: 56 })],
+        children: [new TextRun({ text: title || "Без названия", font: "Georgia", size: 56 })],
       }),
       new Paragraph({ children: [new TextRun("")] }),
       ...content.split(/\n\n+/).map(
@@ -118,8 +118,8 @@ function Editor() {
       ),
     ];
     const doc = new Document({
-      creator: "Inkwell",
-      title: title || "Untitled",
+      creator: "Муза",
+      title: title || "Без названия",
       styles: { default: { document: { run: { font: "Georgia", size: 24 } } } },
       sections: [{ children: paragraphs }],
     });
@@ -127,15 +127,15 @@ function Editor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${(title || "untitled").toLowerCase().replace(/\s+/g, "-")}.docx`;
+    a.download = `${(title || "bez-nazvaniya").toLowerCase().replace(/\s+/g, "-")}.docx`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Exported as Word document.");
+    toast.success("Экспортировано в Word.");
   };
 
   const copyText = async () => {
     await navigator.clipboard.writeText(`${title}\n\n${content}`);
-    toast.success("Copied to clipboard.");
+    toast.success("Скопировано в буфер обмена.");
   };
 
   const wc = countWords(content);
@@ -146,17 +146,17 @@ function Editor() {
       <div className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
           <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Desk
+            <ArrowLeft className="h-4 w-4" /> Стол
           </Link>
           <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
-            <span>{wc} words · {readMin} min read</span>
+            <span>{wc} сл. · {readMin} мин чтения</span>
             <span className="italic">
-              {saving === "saving" ? "saving…" : saving === "saved" ? "saved" : "·"}
+              {saving === "saving" ? "сохраняем…" : saving === "saved" ? "сохранено" : "·"}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
-              <Copy className="h-3.5 w-3.5" /> Copy
+              <Copy className="h-3.5 w-3.5" /> Копировать
             </button>
             <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Download className="h-3.5 w-3.5" /> .md
@@ -172,14 +172,14 @@ function Editor() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Untitled"
+          placeholder="Без названия"
           className="w-full border-0 bg-transparent font-display text-5xl font-light tracking-tight text-foreground placeholder:text-muted-foreground/50 focus:outline-none md:text-6xl"
         />
         <div className="rule mt-6" />
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Begin here…"
+          placeholder="Начните здесь…"
           rows={24}
           className="editor-prose mt-8 w-full resize-none border-0 bg-transparent placeholder:text-muted-foreground/50"
           onKeyDown={(e) => {
@@ -187,7 +187,7 @@ function Editor() {
           }}
         />
         <p className="mt-10 flex items-center gap-2 text-xs italic text-muted-foreground">
-          <Sparkles className="h-3 w-3 text-ember" /> Autosaves as you write. ⌘S to save now.
+          <Sparkles className="h-3 w-3 text-ember" /> Автосохранение во время письма. ⌘S — сохранить сейчас.
         </p>
       </article>
     </main>

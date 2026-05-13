@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Plus, Flame, Target, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Desk · Inkwell" }] }),
+  head: () => ({ meta: [{ title: "Стол · Муза" }] }),
   component: Dashboard,
 });
 
@@ -55,7 +55,7 @@ function Dashboard() {
     if (!user) return;
     const { data, error } = await supabase
       .from("posts")
-      .insert({ user_id: user.id, title: "Untitled", content: "" })
+      .insert({ user_id: user.id, title: "Без названия", content: "" })
       .select()
       .single();
     if (error) return toast.error(error.message);
@@ -74,11 +74,11 @@ function Dashboard() {
   };
 
   const deletePost = async (id: string) => {
-    if (!confirm("Delete this draft permanently?")) return;
+    if (!confirm("Удалить этот черновик навсегда?")) return;
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) return toast.error(error.message);
     setPosts(posts.filter((p) => p.id !== id));
-    toast.success("Draft removed.");
+    toast.success("Черновик удалён.");
   };
 
   const intensity = (n: number) => {
