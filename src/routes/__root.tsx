@@ -54,7 +54,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Муза — студия для ежедневного письма" },
-      { name: "description", content: "Пишите, переписывайте и делитесь своими текстами. Стройте привычку писать каждый день: подсказки, серии и тихий редактор." },
+      { name: "description", content: "Пишите каждый день. Сохраняйте мысли, переписывайте черновики, делитесь текстами.
+Превратите письмо в спокойный ежедневный ритуал: темы,  достижения,  редактор." },
+      { property: "og:title", content: "Муза — студия для ежедневного письма" },
+      { name: "twitter:title", content: "Муза — студия для ежедневного письма" },
+      { property: "og:description", content: "Пишите каждый день. Сохраняйте мысли, переписывайте черновики, делитесь текстами.
+Превратите письмо в спокойный ежедневный ритуал: темы,  достижения,  редактор." },
+      { name: "twitter:description", content: "Пишите каждый день. Сохраняйте мысли, переписывайте черновики, делитесь текстами.
+Превратите письмо в спокойный ежедневный ритуал: темы,  достижения,  редактор." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QRDZpZsQaFgrBJHOedBBOMLJSjH3/social-images/social-1778687749127-пигите_каждый_день.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QRDZpZsQaFgrBJHOedBBOMLJSjH3/social-images/social-1778687749127-пигите_каждый_день.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
