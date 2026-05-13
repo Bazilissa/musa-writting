@@ -95,28 +95,28 @@ function Dashboard() {
       <section className="grid gap-6 pt-6 md:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            <Flame className="h-3.5 w-3.5 text-ember" /> Streak
+            <Flame className="h-3.5 w-3.5 text-ember" /> Серия
           </div>
           <div className="mt-3 font-display text-5xl font-light">
             {streak}
-            <span className="ml-2 text-base italic text-muted-foreground">days</span>
+            <span className="ml-2 text-base italic text-muted-foreground">дн.</span>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">Days in a row you hit your goal.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Дней подряд, когда вы выполнили цель.</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            <Target className="h-3.5 w-3.5 text-ember" /> Today
+            <Target className="h-3.5 w-3.5 text-ember" /> Сегодня
           </div>
           <div className="mt-3 font-display text-5xl font-light">
             {today}
-            <span className="ml-2 text-base italic text-muted-foreground">/ {goal} words</span>
+            <span className="ml-2 text-base italic text-muted-foreground">/ {goal} слов</span>
           </div>
           <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
             <div className="h-full bg-ember transition-all" style={{ width: `${goalPct}%` }} />
           </div>
           <div className="mt-3 flex items-center gap-2 text-xs">
-            <span className="text-muted-foreground">Goal</span>
+            <span className="text-muted-foreground">Цель</span>
             <input
               type="number" min={50} step={50} value={goal}
               onChange={(e) => setGoal(Math.max(50, Number(e.target.value) || DEFAULT_GOAL))}
@@ -127,35 +127,35 @@ function Dashboard() {
 
         <div className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            <BookOpen className="h-3.5 w-3.5 text-ember" /> Drafts
+            <BookOpen className="h-3.5 w-3.5 text-ember" /> Черновики
           </div>
           <div className="mt-3 font-display text-5xl font-light">{posts.length}</div>
-          <p className="mt-2 text-sm text-muted-foreground">Pieces in your desk drawer.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Тексты в ящике вашего стола.</p>
         </div>
       </section>
 
       <section className="mt-10 rounded-2xl border border-border bg-card p-6">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Today's prompt</p>
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Подсказка дня</p>
         <blockquote className="mt-3 font-display text-2xl font-light italic leading-snug md:text-3xl">
-          “{prompt}”
+          «{prompt}»
         </blockquote>
         <button
           onClick={startWithPrompt}
           className="mt-5 rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
         >
-          Write from this prompt
+          Писать по этой подсказке
         </button>
       </section>
 
       <section className="mt-10">
-        <h2 className="font-display text-lg">Last 35 days</h2>
+        <h2 className="font-display text-lg">Последние 35 дней</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {days.map((d) => {
             const count = dayMap.get(d) ?? 0;
             return (
               <div
                 key={d}
-                title={`${d} · ${count} words`}
+                title={`${d} · ${count} слов`}
                 className={`h-5 w-5 rounded-sm ${intensity(count)} ring-1 ring-border/40`}
               />
             );
@@ -165,21 +165,21 @@ function Dashboard() {
 
       <section className="mt-12">
         <div className="flex items-end justify-between">
-          <h2 className="font-display text-3xl font-light">Your drafts</h2>
+          <h2 className="font-display text-3xl font-light">Ваши черновики</h2>
           <button
             onClick={newPost}
             className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
           >
-            <Plus className="h-4 w-4" /> New piece
+            <Plus className="h-4 w-4" /> Новый текст
           </button>
         </div>
 
         {loading ? (
-          <p className="mt-8 text-sm italic text-muted-foreground">Opening the drawer…</p>
+          <p className="mt-8 text-sm italic text-muted-foreground">Открываем ящик…</p>
         ) : posts.length === 0 ? (
           <div className="mt-8 rounded-2xl border border-dashed border-border p-12 text-center">
-            <p className="font-display text-2xl italic text-muted-foreground">An empty desk.</p>
-            <p className="mt-2 text-sm text-muted-foreground">Begin a new piece, or write from today's prompt.</p>
+            <p className="font-display text-2xl italic text-muted-foreground">Стол пуст.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Начните новый текст или напишите по сегодняшней подсказке.</p>
           </div>
         ) : (
           <ul className="mt-6 divide-y divide-border">
@@ -190,17 +190,17 @@ function Dashboard() {
                   className="flex-1"
                 >
                   <h3 className="font-display text-2xl font-light transition group-hover:text-ember">
-                    {p.title || "Untitled"}
+                    {p.title || "Без названия"}
                   </h3>
                   <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
                     {p.content.replace(/[#>*_`]/g, "").slice(0, 140) || "—"}
                   </p>
                 </Link>
                 <div className="ml-6 hidden items-center gap-6 text-xs text-muted-foreground md:flex">
-                  <span className="font-mono">{p.word_count} words</span>
-                  <span className="italic">{new Date(p.updated_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                  <span className="font-mono">{p.word_count} сл.</span>
+                  <span className="italic">{new Date(p.updated_at).toLocaleDateString("ru-RU", { month: "short", day: "numeric" })}</span>
                   <button onClick={() => deletePost(p.id)} className="text-muted-foreground/60 hover:text-destructive">
-                    delete
+                    удалить
                   </button>
                 </div>
               </li>
