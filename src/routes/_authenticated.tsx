@@ -27,7 +27,7 @@ function AuthLayout() {
     <div className="min-h-screen bg-background paper-grain">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <img src={muzaLogo} alt="Муза" className="h-9 w-9 object-contain" />
+          <img src={muzaLogo} alt="Муза" className="h-10 w-10 rounded-full object-cover ring-1 ring-border" />
           <span className="font-display text-xl tracking-tight">
             Му<span className="italic text-ember">за</span>
           </span>
