@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useEffect } from "react";
+import muzaLogo from "@/assets/muza-logo.png";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
@@ -25,8 +26,11 @@ function AuthLayout() {
   return (
     <div className="min-h-screen bg-background paper-grain">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <Link to="/dashboard" className="font-display text-xl tracking-tight">
-          Му<span className="italic text-ember">за</span>
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <img src={muzaLogo} alt="Муза" className="h-9 w-9 object-contain" />
+          <span className="font-display text-xl tracking-tight">
+            Му<span className="italic text-ember">за</span>
+          </span>
         </Link>
         <div className="flex items-center gap-6 text-sm">
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>
