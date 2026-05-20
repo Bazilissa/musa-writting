@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { getDailyPrompt } from "@/lib/prompts";
+import muzaLogo from "@/assets/muza-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,9 +28,12 @@ function Landing() {
   return (
     <main className="min-h-screen bg-background paper-grain">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
-        <div className="font-display text-2xl tracking-tight">
-          Му<span className="italic text-ember">за</span>
-        </div>
+        <Link to="/" className="flex items-center gap-2">
+          <img src={muzaLogo} alt="Муза" className="h-10 w-10 object-contain" />
+          <span className="font-display text-2xl tracking-tight">
+            Му<span className="italic text-ember">за</span>
+          </span>
+        </Link>
         <Link
           to="/auth"
           className="rounded-full border border-border px-5 py-2 text-sm font-medium transition hover:bg-secondary"
@@ -38,7 +42,8 @@ function Landing() {
         </Link>
       </header>
 
-      <section className="mx-auto max-w-4xl px-6 pt-20 pb-24 text-center">
+      <section className="mx-auto max-w-4xl px-6 pt-12 pb-24 text-center">
+        <img src={muzaLogo} alt="Муза — логотип" className="mx-auto mb-8 h-48 w-48 object-contain md:h-64 md:w-64" />
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Студия для писателей
         </p>
