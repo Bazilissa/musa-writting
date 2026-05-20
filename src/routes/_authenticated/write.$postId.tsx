@@ -186,7 +186,7 @@ function Editor() {
         <div className="rule mt-6" />
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => setContent(e.target.value.replace(/--/g, "—"))}
           placeholder="Начните здесь…"
           rows={24}
           className="editor-prose mt-8 w-full resize-none border-0 bg-transparent placeholder:text-muted-foreground/50"
