@@ -29,7 +29,7 @@ function Landing() {
     <main className="min-h-screen bg-background paper-grain">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <img src={muzaLogo} alt="Муза" className="h-10 w-10 object-contain" />
+          <img src={muzaLogo} alt="Муза" className="h-11 w-11 rounded-full object-cover ring-1 ring-border" />
           <span className="font-display text-2xl tracking-tight">
             Му<span className="italic text-ember">за</span>
           </span>
@@ -43,7 +43,7 @@ function Landing() {
       </header>
 
       <section className="mx-auto max-w-4xl px-6 pt-12 pb-24 text-center">
-        <img src={muzaLogo} alt="Муза — логотип" className="mx-auto mb-8 h-48 w-48 object-contain md:h-64 md:w-64" />
+        <img src={muzaLogo} alt="Муза — логотип" className="mx-auto mb-10 h-44 w-44 rounded-full object-cover ring-1 ring-border md:h-56 md:w-56" />
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Студия для писателей
         </p>
