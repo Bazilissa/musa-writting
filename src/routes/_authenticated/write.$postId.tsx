@@ -1,11 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
-import { askMuse } from "@/lib/muse-assistant.functions";
 import { toast } from "sonner";
 import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
@@ -28,25 +26,35 @@ function Editor() {
   const baseWords = useRef(0);
 
   // Муза-помощник (AI)
-  const callMuse = useServerFn(askMuse);
+
   const [showMuse, setShowMuse] = useState(false);
   const [museLoading, setMuseLoading] = useState(false);
   const [museReply, setMuseReply] = useState<string>("");
   const [museQuestion, setMuseQuestion] = useState("");
 
-  const askMuza = useCallback(async (question?: string) => {
+ const askMuza = useCallback(async (question?: string) => {
   setMuseLoading(true);
 
   try {
-    const res = await callMuse({
-      data: {
+    const res = await fetch("/api/muse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         title,
         content,
         question: question ?? "",
-      },
+      }),
     });
 
-    setMuseReply(res.reply);
+    if (!res.ok) {
+      throw new Error("Ошибка Музы");
+    }
+
+    const data = await res.json();
+
+    setMuseReply(data.reply);
     setShowMuse(true);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Не удалось получить ответ";
@@ -55,7 +63,7 @@ function Editor() {
   } finally {
     setMuseLoading(false);
   }
-}, [callMuse, title, content]);
+}, [title, content]);
 
   useEffect(() => {
     (async () => {
@@ -197,9 +205,9 @@ function Editor() {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => askMuza()} className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20">
-              <Wand2 className="h-3.5 w-3.5" /> Муза
-            </button>
+            <button  onClick={() => askMuza()} className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20">
+           <Wand2 className="h-3.5 w-3.5" />  Позвать Музу
+           </button>
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Копировать
             </button>
