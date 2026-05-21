@@ -95,7 +95,7 @@ function Editor() {
   const [museAnchor, setMuseAnchor] = useState<MuseAnchor | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
- const askMuza = useCallback(async (question?: string, selection?: TextSelection | null) => {
+ const askDidi = useCallback(async (question?: string, selection?: TextSelection | null) => {
   setMuseLoading(true);
   if (selection?.cloudAnchor) {
     setMuseAnchor(selection.cloudAnchor);
@@ -118,7 +118,7 @@ function Editor() {
 const data = await res.json().catch(() => null);
 
 if (!res.ok) {
-  throw new Error(data?.error ?? "Ошибка Музы");
+  throw new Error(data?.error ?? "Диди не смог ответить");
 }
 
     setMuseReply(data?.reply ?? "");
@@ -158,11 +158,11 @@ if (!res.ok) {
 
   const askSelection = useCallback(() => {
     if (!activeSelection) return;
-    void askMuza(
+    void askDidi(
       "Прокомментируй выделенный фрагмент по предложениям: где сильная фраза, где нужна конкретика, что стоит уточнить.",
       activeSelection,
     );
-  }, [activeSelection, askMuza]);
+  }, [activeSelection, askDidi]);
 
   useEffect(() => {
     (async () => {
@@ -307,7 +307,7 @@ if (!res.ok) {
             <button
               onClick={() => {
                 setMuseAnchor(null);
-                void askMuza();
+                void askDidi();
               }}
               disabled={museLoading}
               className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
