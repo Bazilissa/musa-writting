@@ -26,6 +26,28 @@ function Editor() {
   const lastSaved = useRef({ title: "", content: "" });
   const baseWords = useRef(0);
 
+  // Муза-помощник (AI)
+  const callMuse = useServerFn(askMuse);
+  const [museOpen, setMuseOpen] = useState(false);
+  const [museLoading, setMuseLoading] = useState(false);
+  const [museReply, setMuseReply] = useState<string>("");
+  const [museQuestion, setMuseQuestion] = useState("");
+
+  const askMuza = useCallback(async (question?: string) => {
+    setMuseOpen(true);
+    setMuseLoading(true);
+    try {
+      const res = await callMuse({ data: { title, content, question: question ?? "" } });
+      setMuseReply(res.reply);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Не удалось получить ответ";
+      toast.error(msg);
+      setMuseReply("");
+    } finally {
+      setMuseLoading(false);
+    }
+  }, [callMuse, title, content]);
+
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
