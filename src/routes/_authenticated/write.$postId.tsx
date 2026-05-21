@@ -23,7 +23,6 @@ type TextSelection = {
   start: number;
   end: number;
   anchor: MuseAnchor;
-  cloudAnchor: MuseAnchor;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -68,13 +67,6 @@ function getSelectionAnchor(textarea: HTMLTextAreaElement, selectionStart: numbe
   };
 }
 
-function getCloudAnchor(anchor: MuseAnchor): MuseAnchor {
-  return {
-    top: clamp(anchor.top - 72, 96, Math.max(96, window.innerHeight - 360)),
-    left: clamp(anchor.left + 104, 16, Math.max(16, window.innerWidth - 344)),
-  };
-}
-
 function Editor() {
   const { postId } = Route.useParams();
   const { user } = useAuth();
@@ -92,14 +84,10 @@ function Editor() {
   const [museLoading, setMuseLoading] = useState(false);
   const [museReply, setMuseReply] = useState<string>("");
   const [activeSelection, setActiveSelection] = useState<TextSelection | null>(null);
-  const [museAnchor, setMuseAnchor] = useState<MuseAnchor | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
  const askDidi = useCallback(async (question?: string, selection?: TextSelection | null) => {
   setMuseLoading(true);
-  if (selection?.cloudAnchor) {
-    setMuseAnchor(selection.cloudAnchor);
-  }
 
   try {
  const res = await fetch("/api/muse", {
@@ -152,7 +140,6 @@ if (!res.ok) {
       start: selectionStart,
       end: selectionEnd,
       anchor,
-      cloudAnchor: getCloudAnchor(anchor),
     });
   }, []);
 
@@ -306,7 +293,6 @@ if (!res.ok) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                setMuseAnchor(null);
                 void askDidi();
               }}
               disabled={museLoading}
@@ -375,8 +361,6 @@ if (!res.ok) {
 {showMuse && (
   <MuseCloud
     text={museReply}
-    position={museAnchor}
-    selection={activeSelection?.text}
     onClose={() => setShowMuse(false)}
   />
 )}
