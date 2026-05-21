@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
@@ -13,6 +12,60 @@ export const Route = createFileRoute("/_authenticated/write/$postId")({
   head: () => ({ meta: [{ title: "Письмо · Муза" }] }),
   component: Editor,
 });
+
+type MuseAnchor = {
+  top: number;
+  left: number;
+};
+
+type TextSelection = {
+  text: string;
+  start: number;
+  end: number;
+  anchor: MuseAnchor;
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getSelectionAnchor(textarea: HTMLTextAreaElement, selectionStart: number): MuseAnchor {
+  const rect = textarea.getBoundingClientRect();
+  const style = window.getComputedStyle(textarea);
+  const mirror = document.createElement("div");
+  const marker = document.createElement("span");
+
+  mirror.style.position = "fixed";
+  mirror.style.visibility = "hidden";
+  mirror.style.pointerEvents = "none";
+  mirror.style.whiteSpace = "pre-wrap";
+  mirror.style.overflowWrap = "break-word";
+  mirror.style.boxSizing = style.boxSizing;
+  mirror.style.width = `${textarea.clientWidth}px`;
+  mirror.style.minHeight = `${textarea.clientHeight}px`;
+  mirror.style.padding = style.padding;
+  mirror.style.border = style.border;
+  mirror.style.font = style.font;
+  mirror.style.letterSpacing = style.letterSpacing;
+  mirror.style.lineHeight = style.lineHeight;
+  mirror.style.top = `${rect.top}px`;
+  mirror.style.left = `${rect.left}px`;
+
+  mirror.textContent = textarea.value.slice(0, selectionStart);
+  marker.textContent = textarea.value.slice(selectionStart, selectionStart + 1) || ".";
+  mirror.appendChild(marker);
+  document.body.appendChild(mirror);
+
+  const markerRect = marker.getBoundingClientRect();
+  document.body.removeChild(mirror);
+  const maxTop = Math.max(96, window.innerHeight - 220);
+  const maxLeft = Math.max(16, window.innerWidth - 360);
+
+  return {
+    top: clamp(markerRect.top - textarea.scrollTop + 30, 96, maxTop),
+    left: clamp(markerRect.left + 24, 16, maxLeft),
+  };
+}
 
 function Editor() {
   const { postId } = Route.useParams();
@@ -30,9 +83,15 @@ function Editor() {
   const [showMuse, setShowMuse] = useState(false);
   const [museLoading, setMuseLoading] = useState(false);
   const [museReply, setMuseReply] = useState<string>("");
+  const [activeSelection, setActiveSelection] = useState<TextSelection | null>(null);
+  const [museAnchor, setMuseAnchor] = useState<MuseAnchor | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
- const askMuza = useCallback(async (question?: string) => {
+ const askMuza = useCallback(async (question?: string, selection?: TextSelection | null) => {
   setMuseLoading(true);
+  if (selection?.anchor) {
+    setMuseAnchor(selection.anchor);
+  }
 
   try {
  const res = await fetch("/api/muse", {
@@ -44,6 +103,7 @@ function Editor() {
     title,
     content,
     question: question ?? "",
+    selection: selection?.text ?? "",
   }),
 });
 
@@ -64,6 +124,34 @@ if (!res.ok) {
     setMuseLoading(false);
   }
 }, [title, content]);
+
+  const updateActiveSelection = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.slice(selectionStart, selectionEnd).trim();
+
+    if (!selectedText || selectionStart === selectionEnd) {
+      setActiveSelection(null);
+      return;
+    }
+
+    setActiveSelection({
+      text: selectedText,
+      start: selectionStart,
+      end: selectionEnd,
+      anchor: getSelectionAnchor(textarea, selectionStart),
+    });
+  }, []);
+
+  const askSelection = useCallback(() => {
+    if (!activeSelection) return;
+    void askMuza(
+      "Прокомментируй выделенный фрагмент по предложениям: где сильная фраза, где нужна конкретика, что стоит уточнить.",
+      activeSelection,
+    );
+  }, [activeSelection, askMuza]);
 
   useEffect(() => {
     (async () => {
@@ -206,7 +294,10 @@ if (!res.ok) {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => askMuza()}
+              onClick={() => {
+                setMuseAnchor(null);
+                void askMuza();
+              }}
               disabled={museLoading}
               className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
@@ -234,11 +325,18 @@ if (!res.ok) {
         />
         <div className="rule mt-6" />
         <textarea
+          ref={textareaRef}
           value={content}
-          onChange={(e) => setContent(e.target.value.replace(/--/g, "—"))}
+          onChange={(e) => {
+            setContent(e.target.value.replace(/--/g, "—"));
+            setActiveSelection(null);
+          }}
           placeholder="Начните здесь…"
           rows={24}
           className="editor-prose mt-8 w-full resize-none border-0 bg-transparent placeholder:text-muted-foreground/50"
+          onMouseUp={updateActiveSelection}
+          onKeyUp={updateActiveSelection}
+          onSelect={updateActiveSelection}
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === "s") { e.preventDefault(); save(); }
           }}
@@ -247,9 +345,27 @@ if (!res.ok) {
           <Sparkles className="h-3 w-3 text-ember" /> Автосохранение во время письма. ⌘S — сохранить сейчас.
         </p>
       </article>
+{activeSelection && !showMuse && (
+  <button
+    type="button"
+    onMouseDown={(e) => e.preventDefault()}
+    onClick={askSelection}
+    disabled={museLoading}
+    className="fixed z-40 inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-card/95 px-3 py-2 text-xs text-ember shadow-lg backdrop-blur transition hover:bg-ember/10 disabled:cursor-not-allowed disabled:opacity-60"
+    style={{
+      top: activeSelection.anchor.top,
+      left: activeSelection.anchor.left,
+    }}
+  >
+    <Wand2 className="h-3.5 w-3.5" />
+    {museLoading ? "Слушаем..." : "Муза о фразе"}
+  </button>
+)}
 {showMuse && (
   <MuseCloud
     text={museReply}
+    position={museAnchor}
+    selection={activeSelection?.text}
     onClose={() => setShowMuse(false)}
   />
 )}

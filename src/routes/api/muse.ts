@@ -6,12 +6,25 @@ type MuseRequest = {
   title?: string;
   content?: string;
   question?: string;
+  selection?: string;
 };
 
-function getFallbackReply({ title, content, question }: MuseRequest) {
+function getFallbackReply({ title, content, question, selection }: MuseRequest) {
   const text = content?.trim() || "";
+  const selected = selection?.trim() || "";
   const words = text.split(/\s+/).filter(Boolean);
   const titleLine = title?.trim() ? `«${title.trim()}»` : "текста без названия";
+
+  if (selected) {
+    return [
+      `Я смотрю именно на выделение: «${selected.length > 180 ? `${selected.slice(0, 180).trim()}...` : selected}»`,
+      "Что проверить: у каждого предложения должна быть своя работа — действие, образ, поворот мысли или давление на настроение.",
+      "Если фраза звучит обобщённо, добавь конкретную деталь. Если предложение длинное, проверь, не прячет ли оно главный удар в середине.",
+      question?.trim() ? `По твоему вопросу: ${question.trim()}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+  }
 
   if (!text) {
     return "Муза рядом. Пока текст пустой, начни с одного живого образа, одной сцены или фразы, которая не отпускает. Когда появится хотя бы абзац, я смогу подсветить ритм, слабые места и направление развития.";
@@ -37,11 +50,11 @@ export const Route = createFileRoute("/api/muse")({
     handlers: {
       POST: async ({ request }) => {
         const body = (await request.json()) as MuseRequest;
-        const { title, content, question } = body;
+        const { title, content, question, selection } = body;
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) {
-          return Response.json({ reply: getFallbackReply({ title, content, question }) });
+          return Response.json({ reply: getFallbackReply({ title, content, question, selection }) });
         }
 
         const gateway = createLovableAiGatewayProvider(key);
@@ -54,7 +67,9 @@ export const Route = createFileRoute("/api/muse")({
 Ты не переписываешь текст, а даёшь наблюдения, слабые места и направления развития.
 `;
 
-        const prompt = question
+        const prompt = selection?.trim()
+          ? `${draft}\n\nВыделенный фрагмент автора:\n${selection.trim()}\n\nПрокомментируй только выделенный фрагмент. Разбери конкретные предложения: что в них работает, где фраза проседает, какую одну точную правку или вопрос стоит попробовать. Не переписывай весь текст. Пиши по-русски, коротко, с привязкой к фразам. ${question ? `\n\nВопрос автора: ${question}` : ""}`
+          : question
           ? `${draft}\n\nВопрос автора: ${question}`
           : `Прочитай текст и дай обратную связь как Муза.\n\n${draft}`;
 
@@ -68,7 +83,7 @@ export const Route = createFileRoute("/api/muse")({
           return Response.json({ reply: text });
         } catch (error) {
           console.error("Muse AI error:", error);
-          return Response.json({ reply: getFallbackReply({ title, content, question }) });
+          return Response.json({ reply: getFallbackReply({ title, content, question, selection }) });
         }
       },
     },
