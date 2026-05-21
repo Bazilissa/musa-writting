@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
 import { askMuse } from "@/lib/muse-assistant.functions";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, X, Send } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 import { MuseCloud } from "@/components/MuseCloud";
 
