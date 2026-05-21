@@ -110,4 +110,75 @@
     color: var(--ink);
   }
   .editor-prose:focus { outline: none; }
+  .muse-cloud {
+    filter: drop-shadow(0 18px 28px oklch(0.22 0.02 60 / 0.16));
+    transform-origin: 22px 22px;
+  }
+  .muse-cloud-shell {
+    position: relative;
+    border-radius: 28px 34px 30px 36px / 30px 28px 36px 32px;
+  }
+  .muse-cloud-shell::before,
+  .muse-cloud-shell::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border: 1px solid oklch(0.62 0.14 42 / 0.18);
+    background: oklch(0.985 0.012 85 / 0.9);
+    backdrop-filter: blur(10px);
+  }
+  .muse-cloud-shell::before {
+    top: -10px;
+    left: 24px;
+    width: 72px;
+    height: 36px;
+    border-radius: 999px 999px 16px 16px;
+    border-bottom-color: transparent;
+  }
+  .muse-cloud-shell::after {
+    right: 34px;
+    bottom: -9px;
+    width: 58px;
+    height: 24px;
+    border-radius: 14px 14px 999px 999px;
+    border-top-color: transparent;
+  }
+  .muse-cloud-text {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.62 0.14 42 / 0.35) transparent;
+    mask-image: linear-gradient(to bottom, transparent 0, black 14px, black calc(100% - 22px), transparent 100%);
+  }
+  .muse-cloud-text p {
+    margin: 0 0 0.7rem;
+  }
+  .muse-cloud-text p:last-child {
+    margin-bottom: 0;
+  }
+  .muse-cloud-arrive {
+    animation: muse-cloud-arrive 320ms ease-out both;
+  }
+  .muse-cloud-dissolve {
+    animation: muse-cloud-dissolve 420ms ease-in both;
+  }
+}
+
+@keyframes muse-cloud-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(8px, 8px, 0) scale(0.96);
+    filter: blur(3px) drop-shadow(0 18px 28px oklch(0.22 0.02 60 / 0));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) drop-shadow(0 18px 28px oklch(0.22 0.02 60 / 0.16));
+  }
+}
+
+@keyframes muse-cloud-dissolve {
+  to {
+    opacity: 0;
+    transform: translate3d(12px, -10px, 0) scale(0.94);
+    filter: blur(6px) drop-shadow(0 18px 28px oklch(0.22 0.02 60 / 0));
+  }
 }

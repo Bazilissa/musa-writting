@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import { useState } from "react";
 import { X } from "lucide-react";
 
 interface MuseCloudProps {
@@ -9,6 +10,10 @@ interface MuseCloudProps {
 }
 
 export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps) {
+  const [isDissolving, setIsDissolving] = useState(false);
+  const contentMaxHeight = position
+    ? `min(240px, calc(100vh - ${position.top}px - 112px))`
+    : "min(240px, calc(100vh - 14rem))";
   const style = position
     ? {
         top: `${position.top}px`,
@@ -17,19 +22,26 @@ export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps
       }
     : undefined;
 
+  const close = () => {
+    setIsDissolving(true);
+    window.setTimeout(onClose, 420);
+  };
+
   return (
     <div
-      className="fixed right-8 top-1/3 z-50 w-[min(340px,calc(100vw-2rem))] animate-in fade-in slide-in-from-right-4 duration-300"
+      className={`muse-cloud fixed right-8 top-1/3 z-50 w-[min(320px,calc(100vw-2rem))] ${
+        isDissolving ? "muse-cloud-dissolve" : "muse-cloud-arrive"
+      }`}
       style={style}
     >
-      <div className="rounded-lg border border-ember/30 bg-card/95 p-4 shadow-xl backdrop-blur-md">
+      <div className="muse-cloud-shell border border-ember/25 bg-card/95 p-4 shadow-xl backdrop-blur-md">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Муза
           </span>
 
           <button
-            onClick={onClose}
+            onClick={close}
             className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition hover:bg-secondary hover:text-foreground"
             aria-label="Закрыть Музу"
           >
@@ -43,7 +55,10 @@ export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps
           </blockquote>
         ) : null}
 
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+        <div
+          className="muse-cloud-text prose prose-sm max-w-none overflow-y-auto pb-4 pr-2 text-sm leading-relaxed text-foreground"
+          style={{ maxHeight: contentMaxHeight }}
+        >
           <ReactMarkdown>{text}</ReactMarkdown>
         </div>
       </div>

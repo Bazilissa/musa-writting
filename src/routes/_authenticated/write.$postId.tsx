@@ -58,7 +58,7 @@ function getSelectionAnchor(textarea: HTMLTextAreaElement, selectionStart: numbe
 
   const markerRect = marker.getBoundingClientRect();
   document.body.removeChild(mirror);
-  const maxTop = Math.max(96, window.innerHeight - 220);
+  const maxTop = Math.max(96, window.innerHeight - 320);
   const maxLeft = Math.max(16, window.innerWidth - 360);
 
   return {
