@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
+import { askMuse } from "@/lib/muse-assistant.functions";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles, FileText } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, X, Send } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
