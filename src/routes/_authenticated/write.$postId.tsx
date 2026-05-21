@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2 } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, Lightbulb, LightbulbOff } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 import { MuseCloud } from "@/components/MuseCloud";
 
@@ -75,6 +75,7 @@ function Editor() {
   const [content, setContent] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState<"idle" | "saving" | "saved">("idle");
+  const [lampOn, setLampOn] = useState(false);
   const lastSaved = useRef({ title: "", content: "" });
   const baseWords = useRef(0);
 
@@ -120,6 +121,17 @@ if (!res.ok) {
     setMuseLoading(false);
   }
 }, [title, content]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const hadDarkClass = root.classList.contains("dark");
+
+    root.classList.toggle("dark", !lampOn);
+
+    return () => {
+      root.classList.toggle("dark", hadDarkClass);
+    };
+  }, [lampOn]);
 
   const updateActiveSelection = useCallback(() => {
     const textarea = textareaRef.current;
@@ -291,6 +303,14 @@ if (!res.ok) {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setLampOn((current) => !current)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+            >
+              {lampOn ? <LightbulbOff className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
+              {lampOn ? "Выключить лампу" : "Включить лампу"}
+            </button>
             <button
               onClick={() => {
                 void askDidi();
