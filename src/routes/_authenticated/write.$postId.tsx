@@ -188,6 +188,9 @@ function Editor() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => askMuza()} className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20">
+              <Wand2 className="h-3.5 w-3.5" /> Муза
+            </button>
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Копировать
             </button>
