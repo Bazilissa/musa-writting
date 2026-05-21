@@ -30,7 +30,6 @@ function Editor() {
   const [showMuse, setShowMuse] = useState(false);
   const [museLoading, setMuseLoading] = useState(false);
   const [museReply, setMuseReply] = useState<string>("");
-  const [museQuestion, setMuseQuestion] = useState("");
 
  const askMuza = useCallback(async (question?: string) => {
   setMuseLoading(true);
@@ -48,20 +47,17 @@ function Editor() {
   }),
 });
 
-const text = await res.text();
-console.log("RAW RESPONSE:", text);
+const data = await res.json().catch(() => null);
 
 if (!res.ok) {
-  throw new Error(text);
+  throw new Error(data?.error ?? "Ошибка Музы");
 }
 
-const data = JSON.parse(text);
-
-    setMuseReply(data.reply);
+    setMuseReply(data?.reply ?? "");
     setShowMuse(true);
   } catch (e) {
   console.error("MUSE ERROR FULL:", e);
-  toast.error("Ошибка Музы");
+  toast.error(e instanceof Error ? e.message : "Ошибка Музы");
 
   setMuseReply("");
   } finally {
@@ -209,8 +205,12 @@ const data = JSON.parse(text);
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <button  onClick={() => askMuza()} className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20">
-           <Wand2 className="h-3.5 w-3.5" />  Позвать Музу
+            <button
+              onClick={() => askMuza()}
+              disabled={museLoading}
+              className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+           <Wand2 className="h-3.5 w-3.5" />  {museLoading ? "Зовём Музу..." : "Позвать Музу"}
            </button>
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Копировать
