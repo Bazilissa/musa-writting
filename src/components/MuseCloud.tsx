@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 interface MuseCloudProps {
@@ -11,6 +11,8 @@ interface MuseCloudProps {
 
 export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps) {
   const [isDissolving, setIsDissolving] = useState(false);
+  const isClosingRef = useRef(false);
+  const closeTimeoutRef = useRef<number | null>(null);
   const contentMaxHeight = position
     ? `min(240px, calc(100vh - ${position.top}px - 112px))`
     : "min(240px, calc(100vh - 14rem))";
@@ -22,10 +24,22 @@ export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps
       }
     : undefined;
 
-  const close = () => {
+  const close = useCallback(() => {
+    if (isClosingRef.current) return;
+    isClosingRef.current = true;
     setIsDissolving(true);
-    window.setTimeout(onClose, 420);
-  };
+    closeTimeoutRef.current = window.setTimeout(onClose, 420);
+  }, [onClose]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(close, 60_000);
+    return () => {
+      window.clearTimeout(timer);
+      if (closeTimeoutRef.current) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, [close]);
 
   return (
     <div
@@ -37,13 +51,13 @@ export function MuseCloud({ text, onClose, position, selection }: MuseCloudProps
       <div className="muse-cloud-shell border border-ember/25 bg-card/95 p-4 shadow-xl backdrop-blur-md">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Муза
+            Диди
           </span>
 
           <button
             onClick={close}
             className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-            aria-label="Закрыть Музу"
+            aria-label="Закрыть Диди"
           >
             <X className="h-4 w-4" />
           </button>

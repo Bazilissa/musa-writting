@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Plus, Flame, Target, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Стол · Муза" }] }),
+  head: () => ({ meta: [{ title: "Комната со столом" }] }),
   component: Dashboard,
 });
 

@@ -9,7 +9,7 @@ import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } fro
 import { MuseCloud } from "@/components/MuseCloud";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
-  head: () => ({ meta: [{ title: "Письмо · Муза" }] }),
+  head: () => ({ meta: [{ title: "Письмо · Комната со столом" }] }),
   component: Editor,
 });
 
@@ -23,6 +23,7 @@ type TextSelection = {
   start: number;
   end: number;
   anchor: MuseAnchor;
+  cloudAnchor: MuseAnchor;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -67,6 +68,13 @@ function getSelectionAnchor(textarea: HTMLTextAreaElement, selectionStart: numbe
   };
 }
 
+function getCloudAnchor(anchor: MuseAnchor): MuseAnchor {
+  return {
+    top: clamp(anchor.top - 72, 96, Math.max(96, window.innerHeight - 360)),
+    left: clamp(anchor.left + 104, 16, Math.max(16, window.innerWidth - 344)),
+  };
+}
+
 function Editor() {
   const { postId } = Route.useParams();
   const { user } = useAuth();
@@ -78,7 +86,7 @@ function Editor() {
   const lastSaved = useRef({ title: "", content: "" });
   const baseWords = useRef(0);
 
-  // Муза-помощник (AI)
+  // Диди, Добрый Друг (AI)
 
   const [showMuse, setShowMuse] = useState(false);
   const [museLoading, setMuseLoading] = useState(false);
@@ -89,8 +97,8 @@ function Editor() {
 
  const askMuza = useCallback(async (question?: string, selection?: TextSelection | null) => {
   setMuseLoading(true);
-  if (selection?.anchor) {
-    setMuseAnchor(selection.anchor);
+  if (selection?.cloudAnchor) {
+    setMuseAnchor(selection.cloudAnchor);
   }
 
   try {
@@ -116,8 +124,8 @@ if (!res.ok) {
     setMuseReply(data?.reply ?? "");
     setShowMuse(true);
   } catch (e) {
-  console.error("MUSE ERROR FULL:", e);
-  toast.error(e instanceof Error ? e.message : "Ошибка Музы");
+  console.error("DIDI ERROR FULL:", e);
+  toast.error(e instanceof Error ? e.message : "Диди не смог ответить");
 
   setMuseReply("");
   } finally {
@@ -137,11 +145,14 @@ if (!res.ok) {
       return;
     }
 
+    const anchor = getSelectionAnchor(textarea, selectionStart);
+
     setActiveSelection({
       text: selectedText,
       start: selectionStart,
       end: selectionEnd,
-      anchor: getSelectionAnchor(textarea, selectionStart),
+      anchor,
+      cloudAnchor: getCloudAnchor(anchor),
     });
   }, []);
 
@@ -252,7 +263,7 @@ if (!res.ok) {
       ),
     ];
     const doc = new Document({
-      creator: "Муза",
+      creator: "Комната со столом",
       title: title || "Без названия",
       styles: {
         default: {
@@ -301,7 +312,7 @@ if (!res.ok) {
               disabled={museLoading}
               className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
-           <Wand2 className="h-3.5 w-3.5" />  {museLoading ? "Зовём Музу..." : "Позвать Музу"}
+           <Wand2 className="h-3.5 w-3.5" />  {museLoading ? "Зовём Диди..." : "Позвать Диди"}
            </button>
             <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
               <Copy className="h-3.5 w-3.5" /> Копировать
@@ -358,7 +369,7 @@ if (!res.ok) {
     }}
   >
     <Wand2 className="h-3.5 w-3.5" />
-    {museLoading ? "Слушаем..." : "Муза о фразе"}
+    {museLoading ? "Слушаем..." : "Диди о фразе"}
   </button>
 )}
 {showMuse && (

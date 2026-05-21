@@ -2,15 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { getDailyPrompt } from "@/lib/prompts";
-import muzaLogo from "@/assets/muza-logo.png";
+import { RoomLogo } from "@/components/RoomLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Муза — студия для ежедневного письма" },
-      { name: "description", content: "Тихое место, чтобы писать, переписывать и делиться. Ежедневные подсказки, серии и спокойный редактор для писателей." },
-      { property: "og:title", content: "Муза — студия для ежедневного письма" },
-      { property: "og:description", content: "Пишите каждый день. Делитесь тем, что стоит того." },
+      { title: "Комната со столом" },
+      { name: "description", content: "Тихое место для письма: стол, черновики, ежедневные подсказки и Добрый Друг Диди, которого можно позвать к тексту." },
+      { property: "og:title", content: "Комната со столом" },
+      { property: "og:description", content: "Пишите в тихой комнате. Иногда зовите Диди." },
     ],
   }),
   component: Landing,
@@ -29,9 +29,9 @@ function Landing() {
     <main className="min-h-screen bg-background paper-grain">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <img src={muzaLogo} alt="Муза" className="h-11 w-11 rounded-full object-cover ring-1 ring-border" />
+          <RoomLogo className="h-11 w-11" compact />
           <span className="font-display text-2xl tracking-tight">
-            Му<span className="italic text-ember">за</span>
+            Комната <span className="italic text-ember">со столом</span>
           </span>
         </Link>
         <Link
@@ -42,29 +42,50 @@ function Landing() {
         </Link>
       </header>
 
-      <section className="mx-auto max-w-4xl px-6 pt-12 pb-24 text-center">
-        <img src={muzaLogo} alt="Муза — логотип" className="mx-auto mb-10 h-44 w-44 rounded-full object-cover ring-1 ring-border md:h-56 md:w-56" />
+      <section className="mx-auto max-w-4xl px-6 pt-8 pb-20 text-center">
+        <RoomLogo className="mx-auto mb-10 h-44 w-44 md:h-56 md:w-56" />
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          Студия для писателей
+          Тихое место для письма
         </p>
         <h1 className="mt-6 font-display text-6xl font-light leading-[1.05] tracking-tight text-foreground md:text-8xl">
-          Пишите сегодня.
-          <span className="block italic text-ember">Переписывайте завтра.</span>
+          Комната
+          <span className="block italic text-ember">со столом</span>
         </h1>
         <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-          Спокойный редактор без отвлечений с ежедневной подсказкой и мягкой серией —
-          чтобы появляться за столом было легко.
+          Место, где текст можно оставить на столе, вернуться к нему завтра и иногда позвать Диди —
+          Доброго Друга, который слушает фрагмент, не перехватывая авторский голос.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <Link
             to="/auth"
             className="rounded-full bg-primary px-7 py-3 text-base font-medium text-primary-foreground transition hover:opacity-90"
           >
-            Начать писать
+            Войти в комнату
           </Link>
-          <a href="#today" className="text-sm italic text-muted-foreground underline-offset-4 hover:underline">
-            подсказка дня
+          <a href="#didi" className="text-sm italic text-muted-foreground underline-offset-4 hover:underline">
+            кто такой Диди
           </a>
+        </div>
+      </section>
+
+      <div className="rule mx-auto max-w-3xl" />
+
+      <section id="didi" className="mx-auto grid max-w-5xl gap-10 px-6 py-20 md:grid-cols-[0.85fr_1.15fr] md:items-center">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Добрый Друг</p>
+          <h2 className="mt-4 font-display text-4xl font-light leading-tight md:text-5xl">
+            Диди приходит ненадолго.
+          </h2>
+        </div>
+        <div className="text-lg leading-relaxed text-muted-foreground">
+          <p>
+            Диди не редактирует и не сочиняет вместо вас. Он замечает напряжение,
+            ритм, недосказанность и задаёт маленький вопрос, от которого текст становится слышнее.
+          </p>
+          <p className="mt-5">
+            Его можно позвать к выделенному фрагменту или ко всему черновику. Через минуту облачко тает,
+            как мысль, которую уже можно унести обратно за стол.
+          </p>
         </div>
       </section>
 
@@ -84,9 +105,9 @@ function Landing() {
 
       <section className="mx-auto grid max-w-5xl gap-10 px-6 py-20 md:grid-cols-3">
         {[
-          { k: "01", t: "Муза рядом", d: "Тихий собеседник, который читает черновик и шепчет — где красиво, где слабо и о чём написать дальше." },
-          { k: "02", t: "Чуткая типографика", d: "Двойной дефис сам становится тире. Мелочь, а текст дышит ровнее." },
-          { k: "03", t: "Готово к печати", d: "Один клик — и черновик уходит в Word: Times New Roman, полуторный интервал. Можно нести в редакцию." },
+          { k: "01", t: "Стол", d: "Черновики лежат спокойно: можно открыть любой текст и продолжить без лишнего шума." },
+          { k: "02", t: "Диди", d: "Добрый Друг отвечает коротко, не переписывает фразы и не превращает письмо в урок." },
+          { k: "03", t: "Ритуал", d: "Подсказки, серия дней и экспорт в Word помогают возвращаться к письму без давления." },
         ].map((f) => (
           <div key={f.k}>
             <div className="font-mono text-xs text-ember">{f.k}</div>
@@ -97,7 +118,7 @@ function Landing() {
       </section>
 
       <footer className="mx-auto max-w-6xl px-6 py-10 text-center text-xs text-muted-foreground">
-        Муза · для долгого, неспешного ремесла.
+        Комната со столом · для долгого, неспешного ремесла.
       </footer>
     </main>
   );
