@@ -9,6 +9,7 @@ import { askMuse } from "@/lib/muse-assistant.functions";
 import { toast } from "sonner";
 import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, X, Send } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
+import { MuseCloud } from "@/components/MuseCloud";
 
 export const Route = createFileRoute("/_authenticated/write/$postId")({
   head: () => ({ meta: [{ title: "Письмо · Муза" }] }),
@@ -28,25 +29,33 @@ function Editor() {
 
   // Муза-помощник (AI)
   const callMuse = useServerFn(askMuse);
-  const [museOpen, setMuseOpen] = useState(false);
+  const [showMuse, setShowMuse] = useState(false);
   const [museLoading, setMuseLoading] = useState(false);
   const [museReply, setMuseReply] = useState<string>("");
   const [museQuestion, setMuseQuestion] = useState("");
 
   const askMuza = useCallback(async (question?: string) => {
-    setMuseOpen(true);
-    setMuseLoading(true);
-    try {
-      const res = await callMuse({ data: { title, content, question: question ?? "" } });
-      setMuseReply(res.reply);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Не удалось получить ответ";
-      toast.error(msg);
-      setMuseReply("");
-    } finally {
-      setMuseLoading(false);
-    }
-  }, [callMuse, title, content]);
+  setMuseLoading(true);
+
+  try {
+    const res = await callMuse({
+      data: {
+        title,
+        content,
+        question: question ?? "",
+      },
+    });
+
+    setMuseReply(res.reply);
+    setShowMuse(true);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Не удалось получить ответ";
+    toast.error(msg);
+    setMuseReply("");
+  } finally {
+    setMuseLoading(false);
+  }
+}, [callMuse, title, content]);
 
   useEffect(() => {
     (async () => {
@@ -226,82 +235,12 @@ function Editor() {
           <Sparkles className="h-3 w-3 text-ember" /> Автосохранение во время письма. ⌘S — сохранить сейчас.
         </p>
       </article>
-
-      {museOpen && (
-        <aside className="fixed inset-y-0 right-0 z-30 flex w-full max-w-md flex-col border-l border-border bg-background shadow-2xl">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <div className="flex items-center gap-2">
-              <Wand2 className="h-4 w-4 text-ember" />
-              <h2 className="font-display text-lg">Муза-помощник</h2>
-            </div>
-            <button onClick={() => setMuseOpen(false)} className="rounded-full p-1 text-muted-foreground hover:bg-secondary hover:text-foreground">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-5 py-5">
-            {museLoading ? (
-              <p className="text-sm italic text-muted-foreground">Муза читает ваш черновик…</p>
-            ) : museReply ? (
-              <div className="prose prose-sm prose-neutral max-w-none dark:prose-invert prose-headings:font-display prose-headings:text-foreground prose-strong:text-foreground prose-p:text-foreground/90">
-                <ReactMarkdown>{museReply}</ReactMarkdown>
-              </div>
-            ) : (
-              <p className="text-sm italic text-muted-foreground">Спросите Музу — она прочтёт черновик и даст совет.</p>
-            )}
-          </div>
-
-          <div className="border-t border-border px-5 py-4">
-            <div className="mb-3 flex flex-wrap gap-2">
-              <button
-                onClick={() => askMuza()}
-                disabled={museLoading}
-                className="rounded-full border border-border px-3 py-1 text-xs hover:bg-secondary disabled:opacity-50"
-              >
-                Дай совет
-              </button>
-              <button
-                onClick={() => askMuza("Подбодри меня и предложи, что написать дальше.")}
-                disabled={museLoading}
-                className="rounded-full border border-border px-3 py-1 text-xs hover:bg-secondary disabled:opacity-50"
-              >
-                Вдохнови
-              </button>
-              <button
-                onClick={() => askMuza("Где язык можно сделать ярче и точнее? Приведи 3 примера правок.")}
-                disabled={museLoading}
-                className="rounded-full border border-border px-3 py-1 text-xs hover:bg-secondary disabled:opacity-50"
-              >
-                Улучши язык
-              </button>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const q = museQuestion.trim();
-                if (!q || museLoading) return;
-                setMuseQuestion("");
-                askMuza(q);
-              }}
-              className="flex items-center gap-2"
-            >
-              <input
-                value={museQuestion}
-                onChange={(e) => setMuseQuestion(e.target.value)}
-                placeholder="Спросите Музу…"
-                className="flex-1 rounded-full border border-border bg-transparent px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-              <button
-                type="submit"
-                disabled={museLoading || !museQuestion.trim()}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-        </aside>
-      )}
+{showMuse && (
+  <MuseCloud
+    text={museReply}
+    onClose={() => setShowMuse(false)}
+  />
+)}
     </main>
   );
 }
