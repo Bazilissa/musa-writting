@@ -36,30 +36,34 @@ function Editor() {
   setMuseLoading(true);
 
   try {
-    const res = await fetch("/api/muse", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        content,
-        question: question ?? "",
-      }),
-    });
+ const res = await fetch("/api/muse", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    title,
+    content,
+    question: question ?? "",
+  }),
+});
 
-    if (!res.ok) {
-      throw new Error("Ошибка Музы");
-    }
+const text = await res.text();
+console.log("RAW RESPONSE:", text);
 
-    const data = await res.json();
+if (!res.ok) {
+  throw new Error(text);
+}
+
+const data = JSON.parse(text);
 
     setMuseReply(data.reply);
     setShowMuse(true);
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Не удалось получить ответ";
-    toast.error(msg);
-    setMuseReply("");
+  console.error("MUSE ERROR FULL:", e);
+  toast.error("Ошибка Музы");
+
+  setMuseReply("");
   } finally {
     setMuseLoading(false);
   }
