@@ -75,7 +75,10 @@ function Editor() {
   const [content, setContent] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState<"idle" | "saving" | "saved">("idle");
-  const [lampOn, setLampOn] = useState(false);
+  const [lampOn, setLampOn] = useState(true);
+  useEffect(() => {
+  document.documentElement.classList.toggle("dark", !lampOn);
+}, [lampOn]);
   const lastSaved = useRef({ title: "", content: "" });
   const baseWords = useRef(0);
 
@@ -305,7 +308,7 @@ if (!res.ok) {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setLampOn((current) => !current)}
+              onClick={() => setLampOn((prev) => !prev)}
               className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"
             >
               {lampOn ? <LightbulbOff className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
