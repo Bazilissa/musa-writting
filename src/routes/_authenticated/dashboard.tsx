@@ -250,7 +250,7 @@ function Dashboard() {
             <p className="mt-3 min-h-24 text-lg leading-relaxed text-muted-foreground">
               {inspiration.prompt}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={shuffleInspiration}
@@ -261,7 +261,7 @@ function Dashboard() {
               <button
                 type="button"
                 onClick={() => void startWithText(inspiration.prompt, inspiration.title)}
-                className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+                className="mt-6 rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
               >
                 Начать писать
               </button>
@@ -279,7 +279,7 @@ function Dashboard() {
             <button
               type="button"
               onClick={() => void startWithText(practice.prompt, practice.title)}
-              className="mt-6 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+              className="mt-6 rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
             >
               Начать разминку
             </button>
