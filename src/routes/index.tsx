@@ -2,9 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { getDailyPrompt } from "@/lib/prompts";
 import { toast } from "sonner";
-import { BookOpen, DoorOpen, Feather, Flame, Lightbulb, PenLine, Sparkles } from "lucide-react";
+import { BookOpen, DoorOpen, Flame, Lightbulb, PenLine, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,7 +38,6 @@ function Landing() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const prompt = getDailyPrompt();
   const quote = writerQuotes[new Date().getDate() % writerQuotes.length];
 
   useEffect(() => {
@@ -84,20 +82,8 @@ function Landing() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <section className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 room-door-scene" aria-hidden="true">
-          <div className="room-door" />
-          <div className="room-bookcase" />
-          <div className="room-chair" />
-          <div className="room-desk">
-            <div className="room-lamp" />
-            <div className="room-inkwell" />
-            <div className="room-feather" />
-            <div className="room-drawer room-drawer-left" />
-            <div className="room-drawer room-drawer-right" />
-          </div>
-          <div className="room-floor-shadow" />
-        </div>
+      <section className="relative min-h-screen overflow-hidden paper-grain">
+        <LandingRoomIllustration />
 
         <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-7">
           <header className="flex items-center justify-between">
@@ -107,49 +93,49 @@ function Landing() {
             <button
               type="button"
               onClick={openDesk}
-              className="rounded-full border border-paper/40 bg-paper/20 px-5 py-2 text-sm font-medium text-paper shadow-sm backdrop-blur transition hover:bg-paper/30"
+              className="rounded-full border border-border bg-card/75 px-5 py-2 text-sm font-medium shadow-sm backdrop-blur transition hover:bg-secondary"
             >
               Сесть за стол
             </button>
           </header>
 
           <div className="grid flex-1 items-end gap-10 pb-8 pt-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
-            <section className="max-w-xl text-paper drop-shadow">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-paper/75">
+            <section className="max-w-xl">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">
                 Дверь приоткрыта
               </p>
               <h1 className="mt-5 font-display text-5xl font-light leading-[1.02] tracking-tight md:text-7xl">
                 Сядьте за стол, когда строка позовёт.
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-paper/82">
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
                 Справа лежат черновики и редактор. Слева - подсказки, цитаты, разминки и тихая мотивация на дни, когда основной рукописи лучше дать подышать.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <button
                   type="button"
                   onClick={openDesk}
-                  className="inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3 text-sm font-semibold text-ink shadow-xl transition hover:opacity-90"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   <DoorOpen className="h-4 w-4" /> Сесть за стол
                 </button>
                 <button
                   type="button"
                   onClick={() => setDidiOpen((current) => !current)}
-                  className="rounded-full border border-paper/45 bg-paper/15 px-5 py-3 text-sm text-paper backdrop-blur transition hover:bg-paper/25"
+                  className="rounded-full border border-border bg-card/70 px-5 py-3 text-sm backdrop-blur transition hover:bg-secondary"
                 >
                   Кресло Доброго Друга
                 </button>
               </div>
             </section>
 
-            <section className="ml-auto w-full max-w-md text-paper">
+            <section className="ml-auto w-full max-w-md">
               <div className="grid gap-3">
                 {features.map(({ icon: Icon, title, text }) => (
-                  <div key={title} className="border-b border-paper/25 pb-4">
-                    <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-paper/70">
+                  <div key={title} className="border-b border-border pb-4">
+                    <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-ember">
                       <Icon className="h-3.5 w-3.5" /> {title}
                     </div>
-                    <p className="mt-2 text-base leading-relaxed text-paper/85">{text}</p>
+                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">{text}</p>
                   </div>
                 ))}
               </div>
@@ -162,24 +148,24 @@ function Landing() {
           <button
             type="button"
             onClick={() => setDidiOpen((current) => !current)}
-            className="absolute bottom-[22%] right-[21%] h-[25%] w-[13%] rounded-[45%] focus:outline-none focus:ring-2 focus:ring-paper/80"
+            className="absolute bottom-[22%] right-[21%] h-[25%] w-[13%] rounded-[45%] focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Узнать, кто такой Диди"
           />
           <button
             type="button"
             onClick={() => (user ? chooseDrawer("left") : setAuthOpen(true))}
-            className="absolute bottom-[16%] left-[47%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-paper/80"
+            className="absolute bottom-[16%] left-[47%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Открыть левый ящик"
           />
           <button
             type="button"
             onClick={() => (user ? chooseDrawer("right") : setAuthOpen(true))}
-            className="absolute bottom-[16%] left-[56%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-paper/80"
+            className="absolute bottom-[16%] left-[56%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Открыть правый ящик"
           />
 
           {didiOpen ? (
-            <aside className="absolute bottom-[18%] right-[7%] z-20 w-[min(330px,calc(100vw-2rem))] rounded-[1.5rem] border border-paper/30 bg-paper/92 p-5 text-ink shadow-2xl backdrop-blur">
+            <aside className="absolute bottom-[18%] right-[7%] z-20 w-[min(330px,calc(100vw-2rem))] rounded-[1.5rem] border border-border bg-card/95 p-5 shadow-2xl backdrop-blur">
               <p className="font-mono text-xs uppercase tracking-[0.25em] text-ember">Добрый Друг</p>
               <h2 className="mt-2 font-display text-3xl font-light">Диди сидит рядом.</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">
@@ -275,5 +261,85 @@ function Landing() {
         </div>
       ) : null}
     </main>
+  );
+}
+
+function LandingRoomIllustration() {
+  return (
+    <svg
+      className="pointer-events-none absolute inset-0 h-full w-full text-ink opacity-80"
+      viewBox="0 0 1440 900"
+      role="img"
+      aria-label="Дверь в комнату: стол с лампой, пером и чернильницей, два ящика, кресло Диди и книжный шкаф"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <defs>
+        <radialGradient id="lampGlow" cx="52%" cy="43%" r="34%">
+          <stop offset="0%" stopColor="var(--ember)" stopOpacity="0.2" />
+          <stop offset="58%" stopColor="var(--ember)" stopOpacity="0.07" />
+          <stop offset="100%" stopColor="var(--ember)" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="lineFade" x1="0" x2="1">
+          <stop offset="0%" stopColor="var(--ink)" stopOpacity="0.05" />
+          <stop offset="48%" stopColor="var(--ink)" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="var(--ink)" stopOpacity="0.05" />
+        </linearGradient>
+      </defs>
+
+      <rect width="1440" height="900" fill="transparent" />
+      <circle cx="745" cy="410" r="330" fill="url(#lampGlow)" />
+      <path d="M70 725 C320 684 594 688 822 716 C1040 742 1200 742 1392 712" fill="none" stroke="url(#lineFade)" strokeWidth="2" />
+
+      <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M198 720 V222 C198 126 280 70 383 70 H1010 C1114 70 1198 126 1198 222 V720" strokeWidth="2" opacity="0.5" />
+        <path d="M228 720 V238 C228 160 300 104 392 104 H994 C1087 104 1168 160 1168 238 V720" strokeWidth="1.1" opacity="0.25" />
+        <path d="M196 720 H1238" strokeWidth="1.6" opacity="0.32" />
+
+        <g opacity="0.96">
+          <path d="M470 584 C552 552 784 544 950 572 C974 576 990 590 994 609 C866 625 634 626 470 607 C468 598 468 591 470 584Z" strokeWidth="2.1" />
+          <path d="M505 608 H950 V756 H518 V620" strokeWidth="1.8" />
+          <path d="M564 645 H703 V718 H564Z" strokeWidth="1.5" />
+          <path d="M760 645 H900 V718 H760Z" strokeWidth="1.5" />
+          <path d="M633 681 H642" strokeWidth="5" stroke="var(--ember)" />
+          <path d="M828 681 H837" strokeWidth="5" stroke="var(--ember)" />
+          <path d="M558 756 V828 M916 756 V828" strokeWidth="5" opacity="0.55" />
+        </g>
+
+        <g>
+          <path d="M721 560 V418" strokeWidth="4" opacity="0.6" />
+          <path d="M660 344 H784 L754 417 H690Z" strokeWidth="1.8" stroke="var(--ember)" />
+          <path d="M694 560 C710 568 744 568 760 560" strokeWidth="8" opacity="0.36" />
+          <path d="M682 428 C704 442 740 442 762 428" strokeWidth="1" stroke="var(--ember)" opacity="0.55" />
+        </g>
+
+        <g>
+          <path d="M800 525 C850 496 888 505 928 462" strokeWidth="2.1" />
+          <path d="M812 529 C852 484 891 498 928 462" strokeWidth="8" opacity="0.2" />
+          <path d="M816 531 L932 466" strokeWidth="1" stroke="var(--ember)" opacity="0.7" />
+          <ellipse cx="852" cy="543" rx="24" ry="19" strokeWidth="1.8" />
+          <path d="M843 535 C850 530 860 530 866 535" strokeWidth="3" stroke="var(--ember)" />
+        </g>
+
+        <g opacity="0.86">
+          <path d="M1044 738 V642 C1044 576 1093 532 1140 532 C1188 532 1236 576 1236 642 V738" strokeWidth="1.8" />
+          <path d="M1072 681 C1090 646 1192 646 1210 681" strokeWidth="1.5" stroke="var(--ember)" opacity="0.55" />
+          <path d="M1074 738 H1208 M1092 738 V803 M1190 738 V803" strokeWidth="4" opacity="0.42" />
+        </g>
+
+        <g opacity="0.78">
+          <path d="M1238 255 H1418 V745 H1238" strokeWidth="1.8" />
+          <path d="M1238 332 H1418 M1238 430 H1418 M1238 531 H1418 M1238 633 H1418" strokeWidth="1.2" opacity="0.55" />
+          {[
+            [1260, 278, 18, 48], [1290, 282, 16, 43], [1320, 272, 20, 54], [1362, 286, 17, 38], [1390, 275, 16, 50],
+            [1256, 356, 18, 59], [1288, 350, 16, 64], [1322, 370, 20, 43], [1353, 361, 17, 52], [1388, 348, 19, 66],
+            [1263, 454, 18, 62], [1295, 455, 18, 61], [1328, 448, 18, 69], [1368, 470, 18, 47], [1400, 452, 16, 64],
+            [1260, 559, 18, 60], [1295, 550, 17, 68], [1326, 566, 17, 52], [1364, 558, 18, 61], [1396, 551, 17, 67],
+            [1264, 658, 16, 57], [1290, 665, 18, 50], [1320, 654, 18, 62], [1354, 662, 16, 53], [1390, 651, 18, 66],
+          ].map(([x, y, w, h], index) => (
+            <path key={index} d={`M${x} ${y} V${y + h} H${x + w} V${y}`} strokeWidth="1" stroke={index % 3 === 0 ? "var(--ember)" : "currentColor"} opacity={index % 3 === 0 ? 0.7 : 0.42} />
+          ))}
+        </g>
+      </g>
+    </svg>
   );
 }

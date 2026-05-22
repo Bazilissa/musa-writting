@@ -159,7 +159,6 @@
       linear-gradient(90deg, oklch(0.08 0.016 50 / 0.5), transparent 24% 76%, oklch(0.07 0.016 50 / 0.45)),
       radial-gradient(circle at 48% 28%, oklch(0.88 0.12 78 / 0.5), transparent 18%),
       radial-gradient(circle at 56% 58%, oklch(0.66 0.12 42 / 0.34), transparent 32%),
-      url("/room-door-scene.png") center / cover no-repeat,
       linear-gradient(88deg, oklch(0.14 0.024 58), oklch(0.35 0.055 62) 48%, oklch(0.13 0.022 55));
   }
   .room-door-scene::before {
