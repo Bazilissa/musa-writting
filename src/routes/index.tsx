@@ -99,8 +99,8 @@ function Landing() {
             </button>
           </header>
 
-          <div className="grid flex-1 items-end gap-10 pb-8 pt-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
-            <section className="max-w-xl">
+          <div className="grid flex-1 gap-10 pb-[42vh] pt-12 lg:grid-cols-[0.72fr_0.48fr] lg:items-start lg:justify-between lg:pb-16">
+            <section className="max-w-lg">
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">
                 Дверь приоткрыта
               </p>
@@ -128,7 +128,7 @@ function Landing() {
               </div>
             </section>
 
-            <section className="ml-auto w-full max-w-md">
+            <section className="ml-auto w-full max-w-sm pt-4">
               <div className="grid gap-3">
                 {features.map(({ icon: Icon, title, text }) => (
                   <div key={title} className="border-b border-border pb-4">
@@ -139,7 +139,7 @@ function Landing() {
                   </div>
                 ))}
               </div>
-              <blockquote className="mt-6 font-display text-2xl font-light italic leading-snug">
+              <blockquote className="mt-6 max-w-xs font-display text-2xl font-light italic leading-snug">
                 «{quote}»
               </blockquote>
             </section>
@@ -148,24 +148,24 @@ function Landing() {
           <button
             type="button"
             onClick={() => setDidiOpen((current) => !current)}
-            className="absolute bottom-[22%] right-[21%] h-[25%] w-[13%] rounded-[45%] focus:outline-none focus:ring-2 focus:ring-ember/80"
+            className="absolute bottom-[9%] right-[20%] h-[26%] w-[13%] rounded-[45%] focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Узнать, кто такой Диди"
           />
           <button
             type="button"
             onClick={() => (user ? chooseDrawer("left") : setAuthOpen(true))}
-            className="absolute bottom-[16%] left-[47%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
+            className="absolute bottom-[11%] left-[39%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Открыть левый ящик"
           />
           <button
             type="button"
             onClick={() => (user ? chooseDrawer("right") : setAuthOpen(true))}
-            className="absolute bottom-[16%] left-[56%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
+            className="absolute bottom-[11%] left-[51%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Открыть правый ящик"
           />
 
           {didiOpen ? (
-            <aside className="absolute bottom-[18%] right-[7%] z-20 w-[min(330px,calc(100vw-2rem))] rounded-[1.5rem] border border-border bg-card/95 p-5 shadow-2xl backdrop-blur">
+            <aside className="absolute bottom-[24%] right-[6%] z-20 w-[min(330px,calc(100vw-2rem))] rounded-[1.5rem] border border-border bg-card/95 p-5 shadow-2xl backdrop-blur">
               <p className="font-mono text-xs uppercase tracking-[0.25em] text-ember">Добрый Друг</p>
               <h2 className="mt-2 font-display text-3xl font-light">Диди сидит рядом.</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">
@@ -267,7 +267,7 @@ function Landing() {
 function LandingRoomIllustration() {
   return (
     <svg
-      className="pointer-events-none absolute inset-0 h-full w-full text-ink opacity-80"
+      className="pointer-events-none absolute bottom-[-8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[-5vh] lg:left-[58%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
       viewBox="0 0 1440 900"
       role="img"
       aria-label="Дверь в комнату: стол с лампой, пером и чернильницей, два ящика, кресло Диди и книжный шкаф"
