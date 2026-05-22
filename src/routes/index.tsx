@@ -3,7 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
-import { BookOpen, DoorOpen, Flame, Lightbulb, PenLine, Sparkles } from "lucide-react";
+import { BookOpen, DoorOpen, Lightbulb } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,28 +17,14 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const features = [
-  { icon: PenLine, title: "Правый ящик", text: "Черновики, редактор, экспорт и Диди рядом с текстом." },
-  { icon: Sparkles, title: "Левый ящик", text: "Подсказки дня, случайные темы, цитаты и короткие разминки." },
-  { icon: Flame, title: "Тихая статистика", text: "Серия дней и слова за неделю без гонки и наказаний." },
-];
-
-const writerQuotes = [
-  "Писать можно тихо. Главное - вернуться.",
-  "Одна ясная строка уже держит дверь открытой.",
-  "Ремесло любит маленькие повторения.",
-];
-
 function Landing() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [authOpen, setAuthOpen] = useState(false);
-  const [didiOpen, setDidiOpen] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const quote = writerQuotes[new Date().getDate() % writerQuotes.length];
 
   useEffect(() => {
     if (!loading && user) setAuthOpen(false);
@@ -90,13 +76,6 @@ function Landing() {
             <div className="font-display text-2xl tracking-tight">
               Комната <span className="italic text-ember">со столом</span>
             </div>
-            <button
-              type="button"
-              onClick={openDesk}
-              className="rounded-full border border-border bg-card/75 px-5 py-2 text-sm font-medium shadow-sm backdrop-blur transition hover:bg-secondary"
-            >
-              Сесть за стол
-            </button>
           </header>
 
           <div className="grid flex-1 gap-10 pb-[42vh] pt-12 lg:grid-cols-[0.72fr_0.48fr] lg:items-start lg:justify-between lg:pb-16">
@@ -105,7 +84,7 @@ function Landing() {
                 Дверь приоткрыта
               </p>
               <h1 className="mt-5 font-display text-5xl font-light leading-[1.02] tracking-tight md:text-7xl">
-                Сядьте за стол, когда строка позовёт.
+                Пишите сегодня
               </h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
                 Справа лежат черновики и редактор. Слева - подсказки, цитаты, разминки и тихая мотивация на дни, когда основной рукописи лучше дать подышать.
@@ -114,43 +93,14 @@ function Landing() {
                 <button
                   type="button"
                   onClick={openDesk}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                  className="inline-flex items-center gap-2 rounded-full bg-ember px-6 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
                 >
                   <DoorOpen className="h-4 w-4" /> Сесть за стол
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setDidiOpen((current) => !current)}
-                  className="rounded-full border border-border bg-card/70 px-5 py-3 text-sm backdrop-blur transition hover:bg-secondary"
-                >
-                  Кресло Доброго Друга
-                </button>
               </div>
-            </section>
-
-            <section className="ml-auto w-full max-w-sm pt-4">
-              <div className="grid gap-3">
-                {features.map(({ icon: Icon, title, text }) => (
-                  <div key={title} className="border-b border-border pb-4">
-                    <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-ember">
-                      <Icon className="h-3.5 w-3.5" /> {title}
-                    </div>
-                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">{text}</p>
-                  </div>
-                ))}
-              </div>
-              <blockquote className="mt-6 max-w-xs font-display text-2xl font-light italic leading-snug">
-                «{quote}»
-              </blockquote>
             </section>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setDidiOpen((current) => !current)}
-            className="absolute bottom-[9%] right-[20%] h-[26%] w-[13%] rounded-[45%] focus:outline-none focus:ring-2 focus:ring-ember/80"
-            aria-label="Узнать, кто такой Диди"
-          />
           <button
             type="button"
             onClick={() => (user ? chooseDrawer("left") : setAuthOpen(true))}
@@ -163,16 +113,6 @@ function Landing() {
             className="absolute bottom-[11%] left-[51%] h-[8%] w-[9%] rounded-md focus:outline-none focus:ring-2 focus:ring-ember/80"
             aria-label="Открыть правый ящик"
           />
-
-          {didiOpen ? (
-            <aside className="absolute bottom-[24%] right-[6%] z-20 w-[min(330px,calc(100vw-2rem))] rounded-[1.5rem] border border-border bg-card/95 p-5 shadow-2xl backdrop-blur">
-              <p className="font-mono text-xs uppercase tracking-[0.25em] text-ember">Добрый Друг</p>
-              <h2 className="mt-2 font-display text-3xl font-light">Диди сидит рядом.</h2>
-              <p className="mt-3 leading-relaxed text-muted-foreground">
-                Он не оценивает и не переписывает за вас. Диди слушает фрагмент, замечает ритм, напряжение или недосказанность и задаёт короткий вопрос, который помогает вернуться к собственному голосу.
-              </p>
-            </aside>
-          ) : null}
         </div>
       </section>
 
@@ -267,7 +207,7 @@ function Landing() {
 function LandingRoomIllustration() {
   return (
     <svg
-      className="pointer-events-none absolute bottom-[-8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[-5vh] lg:left-[58%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
+      className="pointer-events-none absolute bottom-[8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[4vh] lg:left-[58%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
       viewBox="0 0 1440 900"
       role="img"
       aria-label="Дверь в комнату: стол с лампой, пером и чернильницей, два ящика, кресло Диди и книжный шкаф"
@@ -313,11 +253,12 @@ function LandingRoomIllustration() {
         </g>
 
         <g>
-          <path d="M800 525 C850 496 888 505 928 462" strokeWidth="2.1" />
-          <path d="M812 529 C852 484 891 498 928 462" strokeWidth="8" opacity="0.2" />
-          <path d="M816 531 L932 466" strokeWidth="1" stroke="var(--ember)" opacity="0.7" />
-          <ellipse cx="852" cy="543" rx="24" ry="19" strokeWidth="1.8" />
-          <path d="M843 535 C850 530 860 530 866 535" strokeWidth="3" stroke="var(--ember)" />
+          <ellipse cx="850" cy="548" rx="27" ry="19" strokeWidth="1.8" />
+          <path d="M833 547 C843 538 858 537 868 547" strokeWidth="3" stroke="var(--ember)" />
+          <path d="M849 536 C866 493 891 456 928 421" strokeWidth="2.2" />
+          <path d="M861 503 C884 473 908 454 940 437" strokeWidth="11" opacity="0.18" />
+          <path d="M856 510 C879 480 905 456 940 437 C929 468 902 495 864 518" strokeWidth="1.2" />
+          <path d="M850 536 L934 431" strokeWidth="1" stroke="var(--ember)" opacity="0.75" />
         </g>
 
         <g opacity="0.86">
