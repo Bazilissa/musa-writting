@@ -15,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 type Post = { id: string; title: string; content: string; word_count: number; updated_at: string };
 
 const DEFAULT_GOAL = 200;
+const DAYS_COUNT = 14;
 const INSPIRATION_BOX = [
   {
     title: "Предмет на столе",
@@ -96,7 +97,7 @@ function Dashboard() {
   const today = stats.find((s) => s.day === todayKey())?.words_written ?? 0;
   const streak = calcStreak(stats, goal);
   const goalPct = Math.min(100, Math.round((today / goal) * 100));
-  const days = lastNDays(35);
+  const days = lastNDays(DAYS_COUNT);
   const dayMap = new Map(stats.map((s) => [s.day, s.words_written]));
   const prompt = getDailyPrompt();
   const inspiration = INSPIRATION_BOX[inspirationIndex];
@@ -158,10 +159,6 @@ function Dashboard() {
   return (
     <main className="mx-auto max-w-6xl px-6 pb-24">
       <section className="flex flex-col gap-5 pt-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Комната со столом</p>
-          <h1 className="mt-2 font-display text-5xl font-light tracking-tight">Два ящика</h1>
-        </div>
         <div className="inline-flex w-fit rounded-full border border-border bg-card p-1">
           <button
             type="button"
@@ -188,7 +185,7 @@ function Dashboard() {
         <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-2xl border border-border bg-card p-6">
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Тема дня</p>
-            <blockquote className="mt-4 font-display text-3xl font-light italic leading-snug">
+            <blockquote className="mt-4 font-display text-2xl font-light italic leading-snug">
               «{prompt}»
             </blockquote>
             <button
@@ -225,11 +222,11 @@ function Dashboard() {
 
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Flame className="h-3.5 w-3.5 text-ember" /> Последние 35 дней
+              <Flame className="h-3.5 w-3.5 text-ember" /> Последние {DAYS_COUNT} дней
             </div>
             <div className="mt-4 flex items-end gap-3">
               <div className="font-display text-5xl font-light">{streak}</div>
-              <div className="pb-2 text-sm italic text-muted-foreground">дней серии</div>
+              <div className="pb-2 text-sm italic text-muted-foreground">дней подряд</div>
             </div>
             <div className="mt-5 flex flex-wrap gap-1.5">
               {days.map((d) => {
@@ -259,28 +256,16 @@ function Dashboard() {
                 onClick={shuffleInspiration}
                 className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm transition hover:bg-secondary"
               >
-                <Shuffle className="h-4 w-4" /> Другой импульс
+                <Shuffle className="h-4 w-4" /> Ещё
               </button>
               <button
                 type="button"
                 onClick={() => void startWithText(inspiration.prompt, inspiration.title)}
                 className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
               >
-                Положить на лист
+                Начать писать
               </button>
             </div>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Quote className="h-3.5 w-3.5 text-ember" /> Цитата дня
-            </div>
-            <blockquote className="mt-4 font-display text-3xl font-light italic leading-snug">
-              «{quote}»
-            </blockquote>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Короткое напоминание о ремесле и привычке возвращаться к странице.
-            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6">
