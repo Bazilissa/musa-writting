@@ -62,20 +62,30 @@ function Dashboard() {
     if (typeof window === "undefined") return DEFAULT_GOAL;
     return Number(localStorage.getItem("inkwell_goal") || DEFAULT_GOAL);
   });
+
   const [drawer, setDrawer] = useState<"left" | "right">(() => {
     if (typeof window === "undefined") return "right";
     return localStorage.getItem("room_preferred_drawer") === "left" ? "left" : "right";
   });
+
   const [inspirationIndex, setInspirationIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
+
     (async () => {
       const [p, s] = await Promise.all([
-        supabase.from("posts").select("id,title,content,word_count,updated_at").order("updated_at", { ascending: false }),
-        supabase.from("daily_stats").select("day,words_written").gte("day", lastNDays(60)[0]),
+        supabase
+          .from("posts")
+          .select("id,title,content,word_count,updated_at")
+          .order("updated_at", { ascending: false }),
+        supabase
+          .from("daily_stats")
+          .select("day,words_written")
+          .gte("day", lastNDays(60)[0]),
       ]);
+
       if (p.data) setPosts(p.data);
       if (s.data) setStats(s.data);
       setLoading(false);
@@ -89,234 +99,182 @@ function Dashboard() {
   const today = stats.find((s) => s.day === todayKey())?.words_written ?? 0;
   const streak = calcStreak(stats, goal);
   const goalPct = Math.min(100, Math.round((today / goal) * 100));
+
   const days = lastNDays(14);
   const dayMap = new Map(stats.map((s) => [s.day, s.words_written]));
+
   const prompt = getDailyPrompt();
   const inspiration = INSPIRATION_BOX[inspirationIndex];
   const practice = WRITING_PRACTICES[new Date().getDay() % WRITING_PRACTICES.length];
 
   const newPost = async () => {
     if (!user) return;
+
     const { data, error } = await supabase
       .from("posts")
       .insert({ user_id: user.id, title: "Без названия", content: "" })
       .select()
       .single();
+
     if (error) return toast.error(error.message);
+
     navigate({ to: "/write/$postId", params: { postId: data.id } });
   };
 
   const startWithText = async (text: string, title = "Без названия") => {
     if (!user) return;
+
     const { data, error } = await supabase
       .from("posts")
       .insert({ user_id: user.id, title, content: `> ${text}\n\n` })
       .select()
       .single();
+
     if (error) return toast.error(error.message);
+
     navigate({ to: "/write/$postId", params: { postId: data.id } });
   };
 
-  const startWithPrompt = async (text: string, title = "Без названия") => {
-    await startWithText(prompt.slice(0, 60));
+  const startWithPrompt = async () => {
+    await startWithText(prompt, "Без названия");
   };
 
   const deletePost = async (id: string) => {
     if (!confirm("Удалить этот черновик навсегда?")) return;
+
     const { error } = await supabase.from("posts").delete().eq("id", id);
+
     if (error) return toast.error(error.message);
+
     setPosts(posts.filter((p) => p.id !== id));
     toast.success("Черновик удалён.");
   };
 
   const shuffleInspiration = () => {
-    setInspirationIndex((current) => (current + 1) % INSPIRATION_BOX.length);
+    setInspirationIndex((c) => (c + 1) % INSPIRATION_BOX.length);
   };
 
-  const openDrawer = (nextDrawer: "left" | "right") => {
-    localStorage.setItem("room_preferred_drawer", nextDrawer);
-    setDrawer(nextDrawer);
+  const openDrawer = (next: "left" | "right") => {
+    localStorage.setItem("room_preferred_drawer", next);
+    setDrawer(next);
   };
 
   const intensity = (n: number) => {
     if (n === 0) return "bg-secondary";
-    const ratio = Math.min(1, n / goal);
-    if (ratio < 0.25) return "bg-ember/20";
-    if (ratio < 0.5) return "bg-ember/40";
-    if (ratio < 0.85) return "bg-ember/65";
+    const r = Math.min(1, n / goal);
+    if (r < 0.25) return "bg-ember/20";
+    if (r < 0.5) return "bg-ember/40";
+    if (r < 0.85) return "bg-ember/65";
     return "bg-ember";
   };
 
   return (
     <main className="mx-auto max-w-6xl px-6 pb-24">
+      {/* HEADER */}
       <section className="flex flex-col gap-5 pt-6 md:flex-row md:items-end md:justify-between">
         <div className="inline-flex w-fit rounded-full border border-border bg-card p-1">
           <button
-            type="button"
             onClick={() => openDrawer("left")}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
-              drawer === "left" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            className={`px-4 py-2 rounded-full ${
+              drawer === "left" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
             }`}
           >
-            <Archive className="h-4 w-4" /> Левый ящик
+            <Archive className="h-4 w-4 inline" /> Левый
           </button>
+
           <button
-            type="button"
             onClick={() => openDrawer("right")}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
-              drawer === "right" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            className={`px-4 py-2 rounded-full ${
+              drawer === "right" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
             }`}
           >
-            <BookOpen className="h-4 w-4" /> Правый ящик
+            <BookOpen className="h-4 w-4 inline" /> Правый
           </button>
         </div>
       </section>
+
+      {/* LEFT */}
       {drawer === "left" ? (
         <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          {/* prompt */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Тема дня</p>
-            <blockquote className="mt-4 font-display text-3xl font-light italic leading-snug">
+            <p className="text-xs uppercase text-ember">Тема дня</p>
+
+            <blockquote className="mt-4 text-3xl italic">
               «{prompt}»
             </blockquote>
+
             <button
               onClick={startWithPrompt}
-              className="mt-6 rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+              className="mt-6 rounded-full bg-ember px-5 py-2 text-white"
             >
-              Начать с этой темы
+              Начать
             </button>
           </div>
-          
-          </div>
-      
-           <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Timer className="h-3.5 w-3.5 text-ember" /> Разминка
-            </div>
-            <h2 className="mt-4 font-display text-3xl font-light">{practice.title}</h2>
-            <p className="mt-3 text-lg leading-relaxed text-muted-foreground">
-              {practice.prompt}
-            </p>
-            <button
-              type="button"
-              onClick={() => void startWithText(practice.prompt, practice.title)}
-              className="mt-6 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-            >
-              Начать разминку
-            </button>
+
+          {/* practice */}
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <Timer className="h-4 w-4 text-ember" />
+            <h2 className="mt-4 text-2xl">{practice.title}</h2>
+            <p className="mt-3 text-muted-foreground">{practice.prompt}</p>
           </div>
         </section>
       ) : (
+        /* RIGHT */
         <section className="mt-10">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Правый ящик</p>
-              <h2 className="mt-2 font-display text-4xl font-light">Черновики</h2>
-            </div>
-            <button
-              onClick={newPost}
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-            >
-              <Plus className="h-4 w-4" /> Новый текст
+          <div className="flex justify-between items-end">
+            <h2 className="text-4xl">Черновики</h2>
+            <button onClick={newPost} className="bg-primary text-white px-4 py-2 rounded-full">
+              Новый
             </button>
           </div>
 
           {loading ? (
-            <p className="mt-8 text-sm italic text-muted-foreground">Открываем правый ящик…</p>
-          ) : posts.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-border p-12 text-center">
-              <p className="font-display text-2xl italic text-muted-foreground">Правый ящик пуст.</p>
-              <p className="mt-2 text-sm text-muted-foreground">Создайте новый текст, когда будете готовы.</p>
-            </div>
+            <p className="mt-8 text-muted-foreground">Загрузка…</p>
           ) : (
-            <ul className="mt-6 divide-y divide-border">
-              {posts.map((p) => (
-                <li key={p.id} className="group flex items-center justify-between py-5">
-                  <Link to="/write/$postId" params={{ postId: p.id }} className="flex-1">
-                    <h3 className="font-display text-2xl font-light transition group-hover:text-ember">
-                      {p.title || "Без названия"}
-                    </h3>
-                    <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
-                      {p.content.replace(/[#>*_`]/g, "").slice(0, 140) || "—"}
-                    </p>
-                  </Link>
-                  <div className="ml-6 hidden items-center gap-6 text-xs text-muted-foreground md:flex">
-                    <span className="font-mono">{p.word_count} сл.</span>
-                    <span className="italic">{new Date(p.updated_at).toLocaleDateString("ru-RU", { month: "short", day: "numeric" })}</span>
-                    <button onClick={() => deletePost(p.id)} className="text-muted-foreground/60 hover:text-destructive">
-                      удалить
-                    </button>
-                  </div>
-<div className="rounded-2xl border border-ember/30 bg-card p-6">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5 text-ember" /> Поиск вдохновения
-            </div>
-            <h2 className="mt-4 font-display text-3xl font-light">{inspiration.title}</h2>
-            <p className="mt-3 min-h-24 text-lg leading-relaxed text-muted-foreground">
-              {inspiration.prompt}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={shuffleInspiration}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm transition hover:bg-secondary"
-              >
-                <Shuffle className="h-4 w-4" /> Ещё
-              </button>
-              <button
-                type="button"
-                onClick={() => void startWithText(inspiration.prompt, inspiration.title)}
-                className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-              >
-                Начать
-              </button>
-            </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Target className="h-3.5 w-3.5 text-ember" /> Цель по словам
-            </div>
-            <div className="mt-4 font-display text-5xl font-light">
-              {today}
-              <span className="ml-2 text-base italic text-muted-foreground">/ {goal}</span>
-            </div>
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-secondary">
-              <div className="h-full bg-ember transition-all" style={{ width: `${goalPct}%` }} />
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground">Сегодняшняя цель</span>
-              <input
-                type="number"
-                min={50}
-                step={50}
-                value={goal}
-                onChange={(e) => setGoal(Math.max(50, Number(e.target.value) || DEFAULT_GOAL))}
-                className="w-24 rounded border border-border bg-transparent px-2 py-1 font-mono"
-              />
-            </div>
-          </div>
+            <>
+              <ul className="mt-6 divide-y">
+                {posts.map((p) => (
+                  <li key={p.id} className="py-5 flex justify-between">
+                    <Link to="/write/$postId" params={{ postId: p.id }}>
+                      <h3>{p.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {p.content.slice(0, 120)}
+                      </p>
+                    </Link>
 
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              <Flame className="h-3.5 w-3.5 text-ember" /> Последние 14 дней
-            </div>
-            <div className="mt-4 flex items-end gap-3">
-              <div className="font-display text-5xl font-light">{streak}</div>
-              <div className="pb-2 text-sm italic text-muted-foreground">дней подряд</div>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-1.5">
-              {days.map((d) => {
-                const count = dayMap.get(d) ?? 0;
-                return (
-                  <div
-                    key={d}
-                    title={`${d} · ${count} слов`}
-                    className={`h-5 w-5 rounded-sm ${intensity(count)} ring-1 ring-border/40`}
-                  />
-                );
-              })}
-            </div>
-                </li>
-              ))}
-            </ul>
+                    <button onClick={() => deletePost(p.id)}>удалить</button>
+                  </li>
+                ))}
+              </ul>
+
+              {/* inspiration */}
+              <div className="mt-8 rounded-2xl border p-6">
+                <h3>{inspiration.title}</h3>
+                <p>{inspiration.prompt}</p>
+
+                <button onClick={shuffleInspiration}>ещё</button>
+              </div>
+
+              {/* stats */}
+              <div className="mt-6 rounded-2xl border p-6">
+                <div className="text-5xl">{streak}</div>
+
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {days.map((d) => {
+                    const count = dayMap.get(d) ?? 0;
+
+                    return (
+                      <div
+                        key={d}
+                        className={`h-5 w-5 rounded-sm ${intensity(count)}`}
+                        title={`${d} · ${count}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </>
           )}
         </section>
       )}
