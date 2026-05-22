@@ -33,9 +33,6 @@ function AuthLayout() {
           </span>
         </Link>
         <div className="flex items-center gap-6 text-sm">
-          <Link to="/dashboard" className="text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-            Комната
-          </Link>
           <button onClick={() => signOut()} className="italic text-muted-foreground hover:text-foreground">
             Выйти
           </button>
