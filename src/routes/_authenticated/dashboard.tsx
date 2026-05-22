@@ -171,7 +171,6 @@ function Dashboard() {
           </button>
         </div>
       </section>
-
       {drawer === "left" ? (
         <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-2xl border border-border bg-card p-6">
@@ -186,6 +185,9 @@ function Dashboard() {
               Начать с этой темы
             </button>
           </div>
+          
+          </div>
+      
            <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
               <Timer className="h-3.5 w-3.5 text-ember" /> Разминка
