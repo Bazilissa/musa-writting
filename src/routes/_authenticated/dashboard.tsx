@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { getDailyPrompt } from "@/lib/prompts";
 import { calcStreak, lastNDays, todayKey, type DailyStat } from "@/lib/streak";
 import { toast } from "sonner";
-import { Plus, Flame, Target, BookOpen, Sparkles, Shuffle, Archive } from "lucide-react";
+import { Plus, Flame, Target, BookOpen, Sparkles, Shuffle, Archive, Quote, Timer } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Комната со столом" }] }),
@@ -38,6 +38,28 @@ const INSPIRATION_BOX = [
   },
 ];
 
+const WRITER_QUOTES = [
+  "Пишите регулярно, пусть даже немного: привычка держит дверь открытой.",
+  "Черновик не обязан быть хорошим. Он обязан появиться.",
+  "Страница становится живой, когда на ней есть конкретная вещь, жест или голос.",
+  "Если нет сил идти дальше, опишите то, что уже стоит перед вами.",
+];
+
+const WRITING_PRACTICES = [
+  {
+    title: "5 минут без остановки",
+    prompt: "Поставьте таймер на пять минут и пишите без пауз, исправлений и оценки. Последнюю фразу оставьте как начало нового абзаца.",
+  },
+  {
+    title: "Предмет на столе",
+    prompt: "Опишите один предмет на столе так, будто он хранит маленькую тайну сцены.",
+  },
+  {
+    title: "Один жест",
+    prompt: "Напишите сцену через один повторяющийся жест героя. Не называйте чувство напрямую.",
+  },
+];
+
 function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -47,7 +69,10 @@ function Dashboard() {
     if (typeof window === "undefined") return DEFAULT_GOAL;
     return Number(localStorage.getItem("inkwell_goal") || DEFAULT_GOAL);
   });
-  const [drawer, setDrawer] = useState<"left" | "right">("left");
+  const [drawer, setDrawer] = useState<"left" | "right">(() => {
+    if (typeof window === "undefined") return "right";
+    return localStorage.getItem("room_preferred_drawer") === "left" ? "left" : "right";
+  });
   const [inspirationIndex, setInspirationIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -75,6 +100,8 @@ function Dashboard() {
   const dayMap = new Map(stats.map((s) => [s.day, s.words_written]));
   const prompt = getDailyPrompt();
   const inspiration = INSPIRATION_BOX[inspirationIndex];
+  const quote = WRITER_QUOTES[new Date().getDate() % WRITER_QUOTES.length];
+  const practice = WRITING_PRACTICES[new Date().getDay() % WRITING_PRACTICES.length];
 
   const newPost = async () => {
     if (!user) return;
@@ -114,6 +141,11 @@ function Dashboard() {
     setInspirationIndex((current) => (current + 1) % INSPIRATION_BOX.length);
   };
 
+  const openDrawer = (nextDrawer: "left" | "right") => {
+    localStorage.setItem("room_preferred_drawer", nextDrawer);
+    setDrawer(nextDrawer);
+  };
+
   const intensity = (n: number) => {
     if (n === 0) return "bg-secondary";
     const ratio = Math.min(1, n / goal);
@@ -133,7 +165,7 @@ function Dashboard() {
         <div className="inline-flex w-fit rounded-full border border-border bg-card p-1">
           <button
             type="button"
-            onClick={() => setDrawer("left")}
+            onClick={() => openDrawer("left")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
               drawer === "left" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}
@@ -142,7 +174,7 @@ function Dashboard() {
           </button>
           <button
             type="button"
-            onClick={() => setDrawer("right")}
+            onClick={() => openDrawer("right")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
               drawer === "right" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}
@@ -237,6 +269,35 @@ function Dashboard() {
                 Положить на лист
               </button>
             </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <Quote className="h-3.5 w-3.5 text-ember" /> Цитата дня
+            </div>
+            <blockquote className="mt-4 font-display text-3xl font-light italic leading-snug">
+              «{quote}»
+            </blockquote>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Короткое напоминание о ремесле и привычке возвращаться к странице.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <Timer className="h-3.5 w-3.5 text-ember" /> Разминка
+            </div>
+            <h2 className="mt-4 font-display text-3xl font-light">{practice.title}</h2>
+            <p className="mt-3 text-lg leading-relaxed text-muted-foreground">
+              {practice.prompt}
+            </p>
+            <button
+              type="button"
+              onClick={() => void startWithText(practice.prompt, practice.title)}
+              className="mt-6 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            >
+              Начать разминку
+            </button>
           </div>
         </section>
       ) : (
