@@ -14,7 +14,6 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiMuseRouteImport } from './routes/api/muse'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedWritePostIdRouteImport } from './routes/_authenticated/write.$postId'
 
 const AuthRoute = AuthRouteImport.update({
@@ -41,11 +40,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedWritePostIdRoute =
   AuthenticatedWritePostIdRouteImport.update({
     id: '/write/$postId',
@@ -56,7 +50,6 @@ const AuthenticatedWritePostIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/muse': typeof ApiMuseRoute
   '/write/$postId': typeof AuthenticatedWritePostIdRoute
@@ -64,7 +57,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/muse': typeof ApiMuseRoute
   '/write/$postId': typeof AuthenticatedWritePostIdRoute
@@ -74,28 +66,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/muse': typeof ApiMuseRoute
   '/_authenticated/write/$postId': typeof AuthenticatedWritePostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/admin'
-    | '/dashboard'
-    | '/api/muse'
-    | '/write/$postId'
+  fullPaths: '/' | '/auth' | '/dashboard' | '/api/muse' | '/write/$postId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin' | '/dashboard' | '/api/muse' | '/write/$postId'
+  to: '/' | '/auth' | '/dashboard' | '/api/muse' | '/write/$postId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/api/muse'
     | '/_authenticated/write/$postId'
@@ -145,13 +129,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/write/$postId': {
       id: '/_authenticated/write/$postId'
       path: '/write/$postId'
@@ -163,13 +140,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedWritePostIdRoute: typeof AuthenticatedWritePostIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedWritePostIdRoute: AuthenticatedWritePostIdRoute,
 }
