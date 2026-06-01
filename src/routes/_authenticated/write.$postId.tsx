@@ -331,12 +331,21 @@ if (!res.ok) {
             <button onClick={copyText} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
               <Copy className="h-3.5 w-3.5" /> Копировать
             </button>
-            <button onClick={exportMd} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
-              <Download className="h-3.5 w-3.5" /> .md
-            </button>
-            <button onClick={exportDocx} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 text-xs text-ember transition hover:bg-ember/20">
-              <FileText className="h-3.5 w-3.5" /> .docx
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
+                  <Share2 className="h-3.5 w-3.5" /> Поделиться
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportMd}>
+                  <Download className="h-3.5 w-3.5" /> Markdown (.md)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportDocx}>
+                  <FileText className="h-3.5 w-3.5" /> Word (.docx)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
