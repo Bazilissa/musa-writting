@@ -4,7 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { countWords, todayKey } from "@/lib/streak";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, Lightbulb, LightbulbOff } from "lucide-react";
+import { ArrowLeft, Download, Copy, Sparkles, FileText, Wand2, Lightbulb, LightbulbOff, Share2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 import { MuseCloud } from "@/components/MuseCloud";
 
