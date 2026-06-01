@@ -295,41 +295,40 @@ if (!res.ok) {
   return (
     <main className="pb-24">
       <div className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
-          <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
+          <Link to="/dashboard" className="inline-flex h-8 shrink-0 items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Стол
           </Link>
-          <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
+          <div className="flex shrink-0 items-center gap-3 text-xs font-mono text-muted-foreground">
             <span>{wc} сл. · {readMin} мин чтения</span>
             <span className="italic">
               {saving === "saving" ? "сохраняем…" : saving === "saved" ? "сохранено" : "·"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setLampOn((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+              className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"
             >
               {lampOn ? <LightbulbOff className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
-              {lampOn ? "Выключить лампу" : "Включить лампу"}
+              {lampOn ? "Лампа" : "Лампа"}
             </button>
             <button
-              onClick={() => {
-                void askDidi();
-              }}
+              onClick={() => { void askDidi(); }}
               disabled={museLoading}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 py-1.5 text-xs text-ember hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-8 items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 text-xs text-ember transition hover:bg-ember/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
-           <Wand2 className="h-3.5 w-3.5" />  {museLoading ? "Зовём Диди..." : "Позвать Диди"}
-           </button>
-            <button onClick={copyText} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
+              <Wand2 className="h-3.5 w-3.5" />
+              {museLoading ? "Зовём…" : "Диди"}
+            </button>
+            <button onClick={copyText} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
               <Copy className="h-3.5 w-3.5" /> Копировать
             </button>
-            <button onClick={exportMd} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary">
+            <button onClick={exportMd} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
               <Download className="h-3.5 w-3.5" /> .md
             </button>
-            <button onClick={exportDocx} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:opacity-90">
+            <button onClick={exportDocx} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-ember/40 bg-ember/10 px-3 text-xs text-ember transition hover:bg-ember/20">
               <FileText className="h-3.5 w-3.5" /> .docx
             </button>
           </div>
