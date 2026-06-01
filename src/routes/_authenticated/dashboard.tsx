@@ -242,28 +242,28 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-ember/30 bg-card p-6">
+          <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-ember" /> Поиск вдохновения
             </div>
             <h2 className="mt-4 font-display text-3xl font-light">{inspiration.title}</h2>
-            <p className="mt-3 min-h-24 text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-lg leading-relaxed text-muted-foreground">
               {inspiration.prompt}
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={shuffleInspiration}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm transition hover:bg-secondary"
-              >
-                <Shuffle className="h-4 w-4" /> Ещё
-              </button>
+            <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={() => void startWithText(inspiration.prompt, inspiration.title)}
-                className="mt-6 rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+                className="rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
               >
                 Начать писать
+              </button>
+              <button
+                type="button"
+                onClick={shuffleInspiration}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2 text-sm transition hover:bg-secondary"
+              >
+                <Shuffle className="h-4 w-4" /> Ещё
               </button>
             </div>
           </div>
