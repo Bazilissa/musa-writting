@@ -177,29 +177,6 @@ function Landing() {
         </div>
       ) : null}
 
-      {user && !authOpen ? (
-        <div className="fixed inset-x-0 bottom-5 z-40 mx-auto w-[min(720px,calc(100vw-2rem))] rounded-full border border-border bg-card/95 px-4 py-3 shadow-2xl backdrop-blur">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-sm text-muted-foreground">Выберите ящик перед тем, как сесть.</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => chooseDrawer("left")}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm transition hover:bg-secondary sm:flex-none"
-              >
-                <Lightbulb className="h-4 w-4 text-ember" /> Левый
-              </button>
-              <button
-                type="button"
-                onClick={() => chooseDrawer("right")}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm text-primary-foreground transition hover:opacity-90 sm:flex-none"
-              >
-                <BookOpen className="h-4 w-4" /> Правый
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </main>
   );
 }
