@@ -79,14 +79,14 @@ function Landing() {
           </header>
 
           <div className="grid flex-1 gap-10 pb-[42vh] pt-12 lg:grid-cols-[0.72fr_0.48fr] lg:items-start lg:justify-between lg:pb-16">
-            <section className="max-w-lg">
+            <section className="max-w-md">
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">
                 Дверь приоткрыта
               </p>
               <h1 className="mt-5 font-display text-5xl font-light leading-[1.02] tracking-tight md:text-7xl">
                 Пишите сегодня
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
                 Справа лежат черновики и редактор. Слева - подсказки, цитаты, разминки и тихая мотивация на дни, когда основной рукописи лучше дать подышать.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
