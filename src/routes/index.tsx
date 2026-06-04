@@ -79,14 +79,14 @@ function Landing() {
           </header>
 
           <div className="grid flex-1 gap-10 pb-[42vh] pt-12 lg:grid-cols-[0.72fr_0.48fr] lg:items-start lg:justify-between lg:pb-16">
-            <section className="max-w-lg">
+            <section className="max-w-md">
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">
                 Дверь приоткрыта
               </p>
               <h1 className="mt-5 font-display text-5xl font-light leading-[1.02] tracking-tight md:text-7xl">
                 Пишите сегодня
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
                 Справа лежат черновики и редактор. Слева - подсказки, цитаты, разминки и тихая мотивация на дни, когда основной рукописи лучше дать подышать.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -184,7 +184,7 @@ function Landing() {
 function LandingRoomIllustration() {
   return (
     <svg
-      className="pointer-events-none absolute bottom-[8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[4vh] lg:left-[58%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
+      className="pointer-events-none absolute bottom-[8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[4vh] lg:left-[64%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
       viewBox="0 0 1440 900"
       role="img"
       aria-label="Дверь в комнату: стол с лампой, пером и чернильницей, два ящика, кресло Диди и книжный шкаф"
