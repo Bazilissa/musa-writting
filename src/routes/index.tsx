@@ -184,7 +184,7 @@ function Landing() {
 function LandingRoomIllustration() {
   return (
     <svg
-      className="pointer-events-none absolute bottom-[8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[4vh] lg:left-[58%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
+      className="pointer-events-none absolute bottom-[8vh] left-1/2 h-[68vh] w-[min(1180px,100vw)] -translate-x-1/2 text-ink opacity-75 lg:bottom-[4vh] lg:left-[64%] lg:h-[78vh] lg:w-[min(1240px,78vw)]"
       viewBox="0 0 1440 900"
       role="img"
       aria-label="Дверь в комнату: стол с лампой, пером и чернильницей, два ящика, кресло Диди и книжный шкаф"
