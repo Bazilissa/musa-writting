@@ -191,9 +191,41 @@ if (!res.ok) {
       setContent(data.content);
       lastSaved.current = { title: data.title, content: data.content };
       baseWords.current = data.word_count;
+      sessionWordsStart.current = data.word_count;
       setLoaded(true);
+      if (user) {
+        const { data: sess } = await supabase
+          .from("writing_sessions")
+          .insert({ user_id: user.id, post_id: postId, words_start: data.word_count, words_end: data.word_count })
+          .select("id")
+          .single();
+        if (sess) sessionId.current = sess.id;
+      }
     })();
-  }, [postId, navigate]);
+  }, [postId, navigate, user]);
+
+  // Close session on unmount or page hide
+  useEffect(() => {
+    const close = () => {
+      const id = sessionId.current;
+      if (!id) return;
+      const wc = countWords(content);
+      void supabase
+        .from("writing_sessions")
+        .update({
+          ended_at: new Date().toISOString(),
+          words_end: wc,
+          words_written: Math.max(0, wc - sessionWordsStart.current),
+        })
+        .eq("id", id);
+    };
+    window.addEventListener("pagehide", close);
+    return () => {
+      window.removeEventListener("pagehide", close);
+      close();
+    };
+  }, [content]);
+
 
   const save = useCallback(async () => {
     if (!user) return;
