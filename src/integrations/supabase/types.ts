@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_challenges: {
+        Row: {
+          challenge_key: string
+          completed_at: string | null
+          created_at: string
+          day: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_key: string
+          completed_at?: string | null
+          created_at?: string
+          day: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_key?: string
+          completed_at?: string | null
+          created_at?: string
+          day?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_stats: {
         Row: {
           created_at: string
@@ -118,6 +148,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      writing_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          post_id: string
+          started_at: string
+          updated_at: string
+          user_id: string
+          words_end: number
+          words_start: number
+          words_written: number
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          post_id: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+          words_end?: number
+          words_start?: number
+          words_written?: number
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          post_id?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+          words_end?: number
+          words_start?: number
+          words_written?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "writing_sessions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
