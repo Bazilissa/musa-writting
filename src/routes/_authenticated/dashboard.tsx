@@ -192,12 +192,12 @@ function Dashboard() {
   const toggleReminder = async () => {
     if (!reminder.enabled) {
       const perm = await ensurePermission();
-      setNotifPerm(perm);
       if (perm !== "granted") {
         toast.error("Разрешите уведомления в браузере, чтобы получать напоминания.");
         return;
       }
     }
+
     const next = { ...reminder, enabled: !reminder.enabled };
     saveReminderSettings(next);
     setReminder(next);
