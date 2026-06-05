@@ -245,10 +245,70 @@ function Dashboard() {
             <BookOpen className="h-4 w-4" /> Правый ящик
           </button>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleReminder}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
+              reminder.enabled
+                ? "border-ember/40 bg-ember/10 text-ember"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {reminder.enabled ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
+            {reminder.enabled ? `Напоминание в ${reminder.time}` : "Напоминания выключены"}
+          </button>
+          <input
+            type="time"
+            value={reminder.time}
+            onChange={(e) => updateReminderTime(e.target.value)}
+            className="rounded-full border border-border bg-transparent px-3 py-2 font-mono text-xs"
+          />
+          <Link
+            to="/history"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs text-muted-foreground transition hover:text-foreground"
+          >
+            <History className="h-3.5 w-3.5" /> История сессий
+          </Link>
+        </div>
       </section>
 
       {drawer === "left" ? (
         <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="rounded-2xl border border-border bg-card p-6 lg:col-span-2">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5 text-ember" /> Задание дня
+              </div>
+              <button
+                type="button"
+                onClick={toggleChallenge}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                  challengeDoneAt
+                    ? "border-ember/40 bg-ember/10 text-ember"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {challengeDoneAt ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                {challengeDoneAt ? "Выполнено" : "Отметить выполненным"}
+              </button>
+            </div>
+            <h2 className="mt-4 font-display text-3xl font-light">{challenge.title}</h2>
+            <p className="mt-3 text-lg leading-relaxed text-muted-foreground">{challenge.prompt}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={startChallenge}
+                className="rounded-full bg-ember px-5 py-2 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+              >
+                Начать задание
+              </button>
+              <span className="text-xs italic text-muted-foreground">
+                Ориентир: около {challenge.minWords} слов.
+              </span>
+            </div>
+          </div>
+
           <div className="rounded-2xl border border-border bg-card p-6">
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-ember">Тема дня</p>
             <blockquote className="mt-4 font-display text-2xl font-light italic leading-snug">
@@ -261,6 +321,7 @@ function Dashboard() {
               Начать с этой темы
             </button>
           </div>
+
 
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
