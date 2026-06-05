@@ -91,15 +91,24 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [p, s] = await Promise.all([
+      const today = todayKey();
+      const [p, s, c] = await Promise.all([
         supabase.from("posts").select("id,title,content,word_count,updated_at").order("updated_at", { ascending: false }),
         supabase.from("daily_stats").select("day,words_written").gte("day", lastNDays(60)[0]),
+        supabase.from("daily_challenges").select("completed_at").eq("day", today).eq("challenge_key", challenge.key).maybeSingle(),
       ]);
       if (p.data) setPosts(p.data);
       if (s.data) setStats(s.data);
+      if (c.data?.completed_at) setChallengeDoneAt(c.data.completed_at);
       setLoading(false);
     })();
-  }, [user]);
+  }, [user, challenge.key]);
+
+  useEffect(() => {
+    const cancel = scheduleNextReminder();
+    return cancel;
+  }, [reminder]);
+
 
   useEffect(() => {
     localStorage.setItem("inkwell_goal", String(goal));
