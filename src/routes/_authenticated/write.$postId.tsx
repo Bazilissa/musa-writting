@@ -205,11 +205,13 @@ if (!res.ok) {
   }, [postId, navigate, user]);
 
   // Close session on unmount or page hide
+  const contentRef = useRef(content);
+  useEffect(() => { contentRef.current = content; }, [content]);
   useEffect(() => {
     const close = () => {
       const id = sessionId.current;
       if (!id) return;
-      const wc = countWords(content);
+      const wc = countWords(contentRef.current);
       void supabase
         .from("writing_sessions")
         .update({
@@ -224,7 +226,8 @@ if (!res.ok) {
       window.removeEventListener("pagehide", close);
       close();
     };
-  }, [content]);
+  }, []);
+
 
 
   const save = useCallback(async () => {
