@@ -87,6 +87,9 @@ function Editor() {
 }, [lampOn]);
   const lastSaved = useRef({ title: "", content: "" });
   const baseWords = useRef(0);
+  const sessionId = useRef<string | null>(null);
+  const sessionWordsStart = useRef(0);
+
 
   // Диди, Добрый Друг (AI)
 
