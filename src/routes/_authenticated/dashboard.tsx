@@ -5,7 +5,10 @@ import { useAuth } from "@/lib/auth";
 import { getDailyPrompt } from "@/lib/prompts";
 import { calcStreak, lastNDays, todayKey, type DailyStat } from "@/lib/streak";
 import { toast } from "sonner";
-import { Plus, Flame, Target, BookOpen, Sparkles, Shuffle, Archive, Quote, Timer } from "lucide-react";
+import { Plus, Flame, Target, BookOpen, Sparkles, Shuffle, Archive, Timer, CheckCircle2, Circle, Bell, BellOff, History } from "lucide-react";
+import { getTodayChallenge } from "@/lib/dailyChallenges";
+import { ensurePermission, loadReminderSettings, saveReminderSettings, scheduleNextReminder, type ReminderSettings } from "@/lib/reminders";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Комната со столом" }] }),
