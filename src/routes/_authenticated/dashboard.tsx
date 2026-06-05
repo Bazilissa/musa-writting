@@ -81,9 +81,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [challengeDoneAt, setChallengeDoneAt] = useState<string | null>(null);
   const [reminder, setReminder] = useState<ReminderSettings>(() => loadReminderSettings());
-  const [notifPerm, setNotifPerm] = useState<NotificationPermission>(
-    typeof Notification !== "undefined" ? Notification.permission : "denied",
-  );
+
 
   const challenge = getTodayChallenge();
 
