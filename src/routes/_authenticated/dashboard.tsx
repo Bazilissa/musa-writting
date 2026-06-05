@@ -167,6 +167,52 @@ function Dashboard() {
     setDrawer(nextDrawer);
   };
 
+  const toggleChallenge = async () => {
+    if (!user) return;
+    const day = todayKey();
+    if (challengeDoneAt) {
+      const { error } = await supabase
+        .from("daily_challenges").delete().eq("user_id", user.id).eq("day", day);
+      if (error) return toast.error(error.message);
+      setChallengeDoneAt(null);
+      toast("Отметка снята.");
+    } else {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from("daily_challenges")
+        .upsert({ user_id: user.id, day, challenge_key: challenge.key, completed_at: now }, { onConflict: "user_id,day" });
+      if (error) return toast.error(error.message);
+      setChallengeDoneAt(now);
+      toast.success("Задание выполнено. До завтра!");
+    }
+  };
+
+  const startChallenge = async () => {
+    await startWithText(challenge.prompt, challenge.title);
+  };
+
+  const toggleReminder = async () => {
+    if (!reminder.enabled) {
+      const perm = await ensurePermission();
+      setNotifPerm(perm);
+      if (perm !== "granted") {
+        toast.error("Разрешите уведомления в браузере, чтобы получать напоминания.");
+        return;
+      }
+    }
+    const next = { ...reminder, enabled: !reminder.enabled };
+    saveReminderSettings(next);
+    setReminder(next);
+    toast.success(next.enabled ? `Напоминание в ${next.time}` : "Напоминания выключены.");
+  };
+
+  const updateReminderTime = (time: string) => {
+    const next = { ...reminder, time };
+    saveReminderSettings(next);
+    setReminder(next);
+  };
+
+
   const intensity = (n: number) => {
     if (n === 0) return "bg-secondary";
     const ratio = Math.min(1, n / goal);
